@@ -1,0 +1,248 @@
+@mixin scrollWithoutScroll() {
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+}
+
+@mixin scrollWithoutScrollHorizontal() {
+  overflow-x: scroll;
+  -ms-overflow-style: none;
+  scrollbar-height: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    height: 0px;
+    background: transparent;
+  }
+}
+
+.scroller {
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+
+  &.__hovered {
+    &.__bar {
+      .scroller__bar {
+        transform: none !important;
+      }
+    }
+  }
+
+  &.__grab {
+    .scroller__content {
+      cursor: grab;
+    }
+  }
+
+  &.__bar {
+    .scroller__bar {
+      display: flex;
+    }
+
+    &:not(.__horizontal) {
+      &:not(.__barAlt) {
+        .scroller__bar {
+          right: 0.25rem;
+          top: 0.25rem;
+          bottom: 0.25rem;
+          width: 0.15rem;
+          transform: translateX(1rem);
+
+          &:before {
+            width: 1rem;
+            right: -0.25rem;
+            top: -0.25rem;
+            bottom: -0.25rem;
+          }
+
+          &:hover {
+            width: 0.5rem;
+          }
+
+          .scroller__bar_roller {
+            right: 0;
+            width: 100%;
+            min-height: 1rem;
+          }
+        }
+      }
+
+      &.__barAlt {
+        .scroller__bar {
+          left: 0.25rem;
+          top: 0.25rem;
+          bottom: 0.25rem;
+          width: 0.15rem;
+          transform: translateX(-1rem);
+
+          &:before {
+            width: 1rem;
+            left: -0.25rem;
+            top: -0.25rem;
+            bottom: -0.25rem;
+          }
+
+          &:hover {
+            width: 0.5rem;
+          }
+
+          .scroller__bar_roller {
+            left: 0;
+            width: 100%;
+            min-height: 1rem;
+          }
+        }
+      }
+    }
+
+    &.__horizontal {
+      &:not(.__barAlt) {
+        .scroller__bar {
+          left: 0.25rem;
+          right: 0.25rem;
+          bottom: 0.25rem;
+          height: 0.15rem;
+          transform: translateY(1rem);
+
+          &:before {
+            height: 1rem;
+            right: -0.25rem;
+            left: -0.25rem;
+            bottom: -0.25rem;
+          }
+
+          &:hover {
+            height: 0.5rem;
+          }
+
+          .scroller__bar_roller {
+            bottom: 0;
+            height: 100%;
+            min-width: 1rem;
+          }
+        }
+      }
+
+      &.__barAlt {
+        .scroller__bar {
+          left: 0.25rem;
+          right: 0.25rem;
+          top: 0.25rem;
+          height: 0.15rem;
+          transform: translateY(-1rem);
+
+          &:before {
+            height: 1rem;
+            right: -0.25rem;
+            left: -0.25rem;
+            top: -0.25rem;
+          }
+
+          &:hover {
+            height: 0.5rem;
+          }
+
+          .scroller__bar_roller {
+            top: 0;
+            height: 100%;
+            min-width: 1rem;
+          }
+        }
+      }
+    }
+  }
+
+  .scroller__bar {
+    position: absolute;
+    border-radius: 1rem;
+    background-color: lightgray;
+    transition: .2s;
+    display: none;
+    z-index: 20;
+
+    &:before {
+      content: '';
+      position: absolute;
+      // background-color: red;
+    }
+
+
+    .scroller__bar_roller {
+      border-radius: 1rem;
+      background-color: gray;
+      position: absolute;
+      transition: opacity .2s;
+
+      &:hover {
+        opacity: 0.6;
+        cursor: grab;
+      }
+
+      &:active {
+        cursor: grabbing
+      }
+    }
+  }
+
+  &.__horizontal {
+    $offset: 1rem;
+
+    &.__borderFade {
+      .scroller__content {
+        mask-image: linear-gradient(to right, transparent 0, black $offset, black calc(100% - $offset), transparent 100%);
+      }
+    }
+
+    &.__borderPadding {
+      .scroller__content {
+        padding-left: $offset;
+        padding-right: $offset;
+      }
+    }
+
+    .scroller__content {
+      @include scrollWithoutScrollHorizontal();
+      max-width: 100%;
+      $offset: 1rem;
+      height: 100%;
+    }
+  }
+
+  &:not(.__horizontal) {
+    $offset: 1rem;
+
+    &.__borderFade {
+      .scroller__content {
+        mask-image: linear-gradient(to bottom, transparent 0, black $offset, black calc(100% - $offset), transparent 100%);
+      }
+    }
+
+    &.__borderPadding {
+      .scroller__content {
+        padding-top: $offset;
+        padding-bottom: $offset;
+      }
+    }
+
+    .scroller__content {
+      @include scrollWithoutScroll();
+      max-height: 100%;
+      width: 100%;
+      flex-direction: column;
+    }
+  }
+
+  .scroller__content {
+    display: flex;
+    &.__grabbing {
+      cursor: grabbing;
+    }
+  }
+}

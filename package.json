@@ -1,0 +1,63 @@
+{
+  "name": "@maxweek/react-scroller",
+  "description": "Make your blocks scrolling easy, with a custom scroll-bar, based on native browser scroll",
+  "version": "1.0.0",
+  "type": "module",
+  "author": "Max Nedelko",
+  "license": "MIT",
+  "homepage": "https://github.com/maxweek/react-scroller#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxweek/react-scroller.git"
+  },
+  "bugs": {
+    "url": "https://github.com/maxweek/react-scroller/issues"
+  },
+  "main": "./dist/react-scroller.umd.cjs",
+  "module": "./dist/react-scroller.js",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "default": "./dist/react-scroller.js",
+        "types": "./dist/index.d.ts"
+      },
+      "require": {
+        "default": "./dist/react-scroller.umd.cjs",
+        "types": "./dist/index.d.ts"
+      }
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "buildModule": "vite build && tsc src/scroller/index.ts --declaration --emitDeclarationOnly --jsx react --esModuleInterop --outDir dist",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "sass": "^1.74.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "path": "^0.12.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0"
+  },
+  "peerDependencies": {
+    "react": "^15.5.4 || ^16.0.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^15.5.4 || ^16.0.0 || ^17.0.0 || ^18.0.0"
+  }
+}
