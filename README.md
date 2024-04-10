@@ -1,8 +1,35 @@
 # React-scroller
 
-Make your blocks scrolling easy, with a custom scroll-bar, based on native browser scroll
+Make your blocks scrolling easy, with a custom scroll-bar, based on native browser scroll.
+It is for simple and progressive applications, works on all modern browsers.
+It has a minimal load on the system, and has maximum performance, expandable and updatable
 
-## How to install
+## Features
+
+- Default scroll
+- Horizontal scroll
+- Grab content
+- Grab cursor
+- Interactive scrollbar
+- Variation of scrollbar positions
+- Border padding and fading
+- Horizontal scroll by mouse wheel
+- Minimal processing
+- Based on original browser scroll
+- Extendable
+
+## Todo
+
+- [x] Base scroll
+- [x] Horizonal scroll
+- [x] Grab content
+- [x] Grab cursors and other visual features
+- [x] Class extending
+- [x] Class extending
+- [ ] Methods
+- [ ] Events
+
+## Installation
 
 ```ts
 npm i @maxweek/react-scroller
@@ -50,10 +77,10 @@ import Scroller from "@maxweek/react-scroller";
     <tr><td>borderFade?</td><td>boolean</td><td>false</td><td>add fadding in directions of scroll by masking</td></tr>
     <tr><td>borderPadding?</td><td>boolean</td><td>false</td><td>add padding in directions of scroll</td></tr>
     <tr><td>grabCursor?</td><td>boolean</td><td>false</td><td>enables grab cursor on hover</td></tr>
-    <tr><td>className?</td><td>string</td><td>false</td><td>class for scroller box</td></tr>
-    <tr><td>barClassName?</td><td>string</td><td>false</td><td>class for scrollbar</td></tr>
-    <tr><td>barRollerClassName?</td><td>string</td><td>false</td><td>class for scrollbar roller</td></tr>
-    <tr><td>contentClassName?</td><td>string</td><td>false</td><td>class for content wrapper</td></tr>
+    <tr><td>className?</td><td>string</td><td>''</td><td>class for scroller box</td></tr>
+    <tr><td>barClassName?</td><td>string</td><td>''</td><td>class for scrollbar</td></tr>
+    <tr><td>barRollerClassName?</td><td>string</td><td>''</td><td>class for scrollbar roller</td></tr>
+    <tr><td>contentClassName?</td><td>string</td><td>''</td><td>class for content wrapper</td></tr>
   </tbody>
 </table>
 
