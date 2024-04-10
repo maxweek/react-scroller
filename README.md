@@ -25,7 +25,6 @@ It has a minimal load on the system, and has maximum performance, expandable and
 - [x] Grab content
 - [x] Grab cursors and other visual features
 - [x] Class extending
-- [x] Class extending
 - [ ] Methods
 - [ ] Events
 
