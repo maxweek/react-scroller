@@ -1,8 +1,8 @@
-import React, { FC, ReactNode, WheelEventHandler, useEffect, useRef, useState } from "react";
+import React, { FC, ReactNode, WheelEventHandler, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import "./styles.scss"
 import { getCl, getClR } from "./helper";
 
-interface Props {
+export interface IScroller {
   children: ReactNode,
   needBar?: boolean,
   barAltPosition?: boolean
@@ -15,10 +15,42 @@ interface Props {
   barClassName?: string,
   barRollerClassName?: string,
   contentClassName?: string,
+  onReachStart?: () => void;
+  onReachEnd?: () => void;
+  onScroll?: () => void;
 }
 
-export const Scroller: FC<Props> = (props: Props) => {
-  const SCROLL = useRef({
+export interface IScrollerProperties {
+  height: number,
+  top: number,
+  boxHeight: number,
+  progress: number,
+  grab: boolean,
+  grabOffset: number,
+  grabStart: number,
+  grabDelta: number,
+  scrollStart: number,
+  hovered: boolean,
+  bar: {
+    height: number,
+    offset: number,
+    offsetStart: number,
+    offsetDelta: number,
+    clicked: boolean
+  }
+}
+
+export interface IScrollerRef {
+  scrollTo: (offset: number) => void;
+  scrollToStart: () => void;
+  scrollToEnd: () => void;
+  update: () => void;
+  getProperties: () => IScrollerProperties;
+  scrollRef: React.RefObject<HTMLDivElement>;
+}
+
+export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, ref) => {
+  const SCROLL = useRef<IScrollerProperties>({
     height: 0,
     top: 0,
     boxHeight: 0,
@@ -37,7 +69,7 @@ export const Scroller: FC<Props> = (props: Props) => {
       clicked: false
     }
   }).current
-  const ref = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
   const rollerRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState<boolean>(false);
@@ -46,7 +78,6 @@ export const Scroller: FC<Props> = (props: Props) => {
   useEffect(() => {
     window.addEventListener('pointerup', handleUp)
     window.addEventListener('pointermove', handleMove)
-    init()
     return () => {
       window.removeEventListener('pointerup', handleUp)
       window.removeEventListener('pointermove', handleMove)
@@ -54,65 +85,109 @@ export const Scroller: FC<Props> = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    let refCur = ref.current
-    if (!refCur) return
+    let mainRefCur = mainRef.current
+    if (!mainRefCur) return
     if (props.horizontal) {
-      refCur.addEventListener('wheel', handleWheel)
+      mainRefCur.addEventListener('wheel', handleWheel)
     }
-    refCur.addEventListener('scroll', handleScroll)
+    mainRefCur.addEventListener('scroll', handleScroll)
     if (props.grab) {
-      refCur.addEventListener('pointerdown', handleRefDown)
+      mainRefCur.addEventListener('pointerdown', handleRefDown)
     }
     return () => {
-      if (!refCur) return
+      if (!mainRefCur) return
+      mainRefCur.removeEventListener('scroll', handleScroll)
       if (props.horizontal) {
-        refCur.removeEventListener('wheel', handleWheel)
+        mainRefCur.removeEventListener('wheel', handleWheel)
       }
-      refCur.removeEventListener('scroll', handleScroll)
       if (props.grab) {
-        refCur.removeEventListener('pointerdown', handleRefDown)
+        mainRefCur.removeEventListener('pointerdown', handleRefDown)
       }
     }
-  }, [ref.current])
+  }, [mainRef.current])
 
   useEffect(() => {
-    let refCur = rollerRef.current
-    if (!refCur) return
-    refCur.addEventListener('pointerdown', handleRollerDown)
+    let mainRefCur = rollerRef.current
+    if (!mainRefCur) return
+    mainRefCur.addEventListener('pointerdown', handleRollerDown)
     return () => {
-      if (!refCur) return
-      refCur.removeEventListener('pointerdown', handleRollerDown)
+      if (!mainRefCur) return
+      mainRefCur.removeEventListener('pointerdown', handleRollerDown)
     }
   }, [rollerRef.current])
 
   useEffect(() => {
-    let refCur = barRef.current
-    if (!refCur) return
-    refCur.addEventListener('wheel', handleBarScroll)
+    let mainRefCur = barRef.current
+    if (!mainRefCur) return
+    mainRefCur.addEventListener('wheel', handleBarScroll)
     return () => {
-      if (!refCur) return
-      refCur.removeEventListener('wheel', handleBarScroll)
+      if (!mainRefCur) return
+      mainRefCur.removeEventListener('wheel', handleBarScroll)
     }
   }, [barRef.current])
 
-  // const handleDown = (e: PointerEvent) => { }
+  useEffect(() => {
+    set()
+    checkRoller();
+  }, [props.children])
+
+
+  const update = () => {
+    set()
+    checkRoller();
+  }
+
+  const scrollTo = (offset: number) => {
+    if (!mainRef.current) return;
+    let scrl: any = {
+      behavior: 'smooth'
+    }
+    if (props.horizontal) {
+      scrl.left = offset
+    } else {
+      scrl.top = offset
+    }
+    mainRef.current.scrollTo(scrl)
+  }
+
+
+  useImperativeHandle(ref, () => ({
+    scrollTo: (offset: number) => {
+      scrollTo(offset);
+    },
+    scrollToStart: () => {
+      scrollTo(0)
+    },
+    scrollToEnd: () => {
+      scrollTo(SCROLL.height)
+    },
+    update: () => {
+      update();
+    },
+    getProperties: () => {
+      return SCROLL
+    },
+    scrollRef: mainRef,
+  }));
+
+
   const handleUp = (e: PointerEvent) => {
     SCROLL.bar.clicked = false
     SCROLL.grab = false
     setHovered(SCROLL.hovered)
 
-    ref.current?.classList.remove('__grabbing')
+    mainRef.current?.classList.remove('__grabbing')
   }
   const handleMove = (e: PointerEvent) => {
-    if (!ref.current) return
+    if (!mainRef.current) return
     if (SCROLL.bar.clicked) {
       SCROLL.bar.offset = getOffset(e);
       SCROLL.bar.offsetDelta = SCROLL.bar.offsetStart - SCROLL.bar.offset;
 
       if (props.horizontal) {
-        ref.current.scrollLeft = SCROLL.scrollStart + (-SCROLL.bar.offsetDelta / SCROLL.boxHeight * SCROLL.height)
+        mainRef.current.scrollLeft = SCROLL.scrollStart + (-SCROLL.bar.offsetDelta / SCROLL.boxHeight * SCROLL.height)
       } else {
-        ref.current.scrollTop = SCROLL.scrollStart + (-SCROLL.bar.offsetDelta / SCROLL.boxHeight * SCROLL.height)
+        mainRef.current.scrollTop = SCROLL.scrollStart + (-SCROLL.bar.offsetDelta / SCROLL.boxHeight * SCROLL.height)
       }
     }
     if (SCROLL.grab) {
@@ -120,50 +195,50 @@ export const Scroller: FC<Props> = (props: Props) => {
       SCROLL.grabDelta = SCROLL.grabStart - SCROLL.grabOffset;
 
       if (props.horizontal) {
-        ref.current.scrollLeft = SCROLL.scrollStart + (SCROLL.grabDelta)
+        mainRef.current.scrollLeft = SCROLL.scrollStart + (SCROLL.grabDelta)
       } else {
-        ref.current.scrollTop = SCROLL.scrollStart + (SCROLL.grabDelta)
+        mainRef.current.scrollTop = SCROLL.scrollStart + (SCROLL.grabDelta)
       }
     }
   }
 
   const handleRefDown = (e: PointerEvent) => {
-    if (!ref.current) return;
+    if (!mainRef.current) return;
     if (SCROLL.bar.clicked) return
     SCROLL.grab = true
     SCROLL.grabStart = getOffset(e)
     if (props.horizontal) {
-      SCROLL.scrollStart = ref.current.scrollLeft
+      SCROLL.scrollStart = mainRef.current.scrollLeft
     } else {
-      SCROLL.scrollStart = ref.current.scrollTop
+      SCROLL.scrollStart = mainRef.current.scrollTop
     }
-    ref.current.classList.add('__grabbing')
+    mainRef.current.classList.add('__grabbing')
   }
 
   const handleRollerDown = (e: PointerEvent) => {
-    if (!ref.current) return;
+    if (!mainRef.current) return;
     SCROLL.bar.clicked = true
     SCROLL.bar.offsetStart = getOffset(e)
     if (props.horizontal) {
-      SCROLL.scrollStart = ref.current.scrollLeft
+      SCROLL.scrollStart = mainRef.current.scrollLeft
     } else {
-      SCROLL.scrollStart = ref.current.scrollTop
+      SCROLL.scrollStart = mainRef.current.scrollTop
     }
   }
   const handleBarScroll = (e: WheelEvent) => {
     e.preventDefault();
-    if (!ref.current) return;
+    if (!mainRef.current) return;
     if (props.horizontal) {
-      ref.current.scrollLeft += e.deltaX
+      mainRef.current.scrollLeft += e.deltaX
     } else {
-      ref.current.scrollTop += e.deltaY
+      mainRef.current.scrollTop += e.deltaY
     }
   }
   const handleWheel = (e: WheelEvent) => {
-    if(e.shiftKey) return;
-    if (!ref.current) return;
+    if (e.shiftKey) return;
+    if (!mainRef.current) return;
     e.preventDefault()
-    ref.current.scrollLeft += e.deltaY / 4;
+    mainRef.current.scrollLeft += e.deltaY / 4;
 
     set()
     checkRoller();
@@ -186,21 +261,16 @@ export const Scroller: FC<Props> = (props: Props) => {
     setHovered(false)
   }
 
-  const init = () => {
-    set();
-    checkRoller()
-  }
-
   const set = () => {
-    if (!ref.current) return;
+    if (!mainRef.current) return;
     if (props.horizontal) {
-      SCROLL.height = ref.current.scrollWidth
-      SCROLL.top = ref.current.scrollLeft
-      SCROLL.boxHeight = ref.current.clientWidth
+      SCROLL.height = mainRef.current.scrollWidth
+      SCROLL.top = mainRef.current.scrollLeft
+      SCROLL.boxHeight = mainRef.current.clientWidth
     } else {
-      SCROLL.height = ref.current.scrollHeight
-      SCROLL.top = ref.current.scrollTop
-      SCROLL.boxHeight = ref.current.clientHeight
+      SCROLL.height = mainRef.current.scrollHeight
+      SCROLL.top = mainRef.current.scrollTop
+      SCROLL.boxHeight = mainRef.current.clientHeight
     }
     SCROLL.progress = SCROLL.top / (SCROLL.height - SCROLL.boxHeight)
   }
@@ -220,6 +290,14 @@ export const Scroller: FC<Props> = (props: Props) => {
       rollerRef.current.style.height = `${SCROLL.bar.height}%`
       rollerRef.current.style.top = `${SCROLL.progress * 100 - SCROLL.progress * SCROLL.bar.height}%`
     }
+
+    if (SCROLL.progress === 0) {
+      props.onReachStart?.()
+    }
+    if (SCROLL.progress === 1) {
+      props.onReachEnd?.()
+    }
+    props.onScroll?.()
   }
 
 
@@ -238,13 +316,13 @@ export const Scroller: FC<Props> = (props: Props) => {
   return (
     <div className={cl} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
       {props.needBar &&
-        <div className={`scroller__bar ${props.barClassName}`} ref={barRef}>
-          <div className={`scroller__bar_roller ${props.barRollerClassName}`} ref={rollerRef} />
+        <div className={`scroller__bar ${getClR(props.barClassName)}`} ref={barRef}>
+          <div className={`scroller__bar_roller ${getClR(props.barRollerClassName)}`} ref={rollerRef} />
         </div>
       }
-      <div className={`scroller__content ${props.contentClassName}`} ref={ref}>
+      <div className={`scroller__content ${getClR(props.contentClassName)}`} ref={mainRef}>
         {props.children}
       </div>
     </div>
   )
-}
+})

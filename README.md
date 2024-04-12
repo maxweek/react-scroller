@@ -17,6 +17,10 @@ It has a minimal load on the system, and has maximum performance, expandable and
 - Minimal processing
 - Based on original browser scroll
 - Extendable
+- Auto updating on child changes
+- Events
+- Methods
+- Ref with methods and properties (with interface)
 
 ## Todo
 
@@ -25,8 +29,8 @@ It has a minimal load on the system, and has maximum performance, expandable and
 - [x] Grab content
 - [x] Grab cursors and other visual features
 - [x] Class extending
-- [ ] Methods
-- [ ] Events
+- [x] Methods
+- [x] Events
 
 ## Installation
 
@@ -34,29 +38,97 @@ It has a minimal load on the system, and has maximum performance, expandable and
 npm i @maxweek/react-scroller
 ```
 
+## First Usage
+
+```ts
+import { Scroller } from "@maxweek/react-scroller";
+
+const YourComponent = () => {
+  <Scroller>
+    {/* Your content */}
+  </Scroller>
+}
+```
+
+
 ## Usage
 
 ```ts
-import Scroller from "@maxweek/react-scroller";
+import { IScrollerRef, Scroller, IScroller, IScrollerProperties } from "@maxweek/react-scroller";
 
-<Scroller
-  needBar={true}
-  barAltPosition={false}
-  horizontal={false}
-  grab={true}
-  borderFade={true}
-  borderPadding={true}
-  grabCursor={true}
-  className={'your-scroller-class'}
-  barClassName={'your-scroller-bar-class'}
-  barRollerClassName={'your-scroller-bar-roller-class'}
-  contentClassName={'your-scroller-content-class'}
->
-  {/* Your content */}
-</Scroller>
+const YourComponent = () => {
+  // Ref
+  const scrollerRef = useRef<IScrollerRef>(null);
+
+  // Methods
+  const scrollToStart = () => {
+    scrollerRef.current?.scrollToStart()          // scroll to start
+  }
+  const scrollToEnd = () => {
+    scrollerRef.current?.scrollToEnd()            // scroll to end
+  }
+  const scrollTo = () => {
+    scrollerRef.current?.scrollTo(100)            // scroll to 100px
+  }
+  const update = () => {
+    scrollerRef.current?.update()                 // update scroll calculations
+  }
+  const getScrollerRef = () => {
+    let ref = scrollerRef.current?.scrollRef      // get ref of main scroller box to contol manualy
+  }
+  const getProperties = () => {
+    if (!scrollerRef.current) return
+    let properties: IScrollerProperties = scrollerRef.current?.getProperties() // get properties of scroller object
+  }
+
+  // Scroller
+  <Scroller
+    ref={scrollerRef}
+    needBar={true}
+    barAltPosition={false}
+    horizontal={false}
+    grab={true}
+    borderFade={true}
+    borderPadding={true}
+    grabCursor={true}
+    className={'your-scroller-class'}
+    barClassName={'your-scroller-bar-class'}
+    barRollerClassName={'your-scroller-bar-roller-class'}
+    contentClassName={'your-scroller-content-class'}
+    onScroll={() => console.log('reach end')}
+    onReachStart={() => console.log('reach start')}
+    onReachEnd={() => console.log('scroll')}
+  >
+    {/* Your content */}
+  </Scroller>
+}
 ```
 
+Full usage you can see on https://github.com/maxweek/react-scroller
+
 ## Props
+
+```js
+  import { IScroller } from "./scroller/scroller"
+
+  const props: Partial<IScroller> = {
+    needBar: true,
+    barAltPosition: true,
+    horizontal: true,
+    grab: true,
+    borderFade: true,
+    borderPadding: true,
+    grabCursor: true,
+    className: 'your-scroller-class',
+    barClassName: 'your-scroller-bar-class',
+    barRollerClassName: 'your-scroller-bar-roller-class',
+    contentClassName: 'your-scroller-content-class',
+    onScroll: () => console.log('reach end'),
+    onReachStart: () => console.log('reach start'),
+    onReachEnd: () => console.log('scroll'),
+  }
+
+```
 
 <table>
   <thead>
@@ -69,6 +141,7 @@ import Scroller from "@maxweek/react-scroller";
   </thead>
   <tbody>
     <tr><td>children</td><td>ReactNode</td><td></td><td>React child</td></tr>
+    <tr><td>ref?</td><td>IScrollerRef</td><td></td><td>Ref to control the element</td></tr>
     <tr><td>needBar?</td><td>boolean</td><td>false</td><td>enables scrollbar</td></tr>
     <tr><td>barAltPosition?</td><td>boolean</td><td>false</td><td>changes scrollbar position, default at right - changes to left, when horizontal enabled - changes bottom to top</td></tr>
     <tr><td>horizontal?</td><td>boolean</td><td>false</td><td>makes your box scrolling horizontal</td></tr>
@@ -80,11 +153,48 @@ import Scroller from "@maxweek/react-scroller";
     <tr><td>barClassName?</td><td>string</td><td>''</td><td>class for scrollbar</td></tr>
     <tr><td>barRollerClassName?</td><td>string</td><td>''</td><td>class for scrollbar roller</td></tr>
     <tr><td>contentClassName?</td><td>string</td><td>''</td><td>class for content wrapper</td></tr>
+    <tr><td>onScroll?</td><td>event</td><td>() => {}</td><td>Event on 'scroll'</td></tr>
+    <tr><td>onReachStart?</td><td>event</td><td>() => {}</td><td>Event on 'scroll' reaches start</td></tr>
+    <tr><td>onReachEnd?</td><td>event</td><td>() => {}</td><td>Event on 'scroll' reaches end</td></tr>
   </tbody>
 </table>
+
+
+## Methods
+
+```js
+
+  import { IScrollerRef, Scroller, IScroller, IScrollerProperties } from "./scroller/scroller"
+
+  const scrollerRef = useRef<IScrollerRef>(null) 
+
+  // Methods
+  const scrollToStart = () => {
+    scrollerRef.current?.scrollToStart()          // scroll to start
+  }
+  const scrollToEnd = () => {
+    scrollerRef.current?.scrollToEnd()            // scroll to end
+  }
+  const scrollTo = () => {
+    scrollerRef.current?.scrollTo(100)            // scroll to 100px
+  }
+  const update = () => {
+    scrollerRef.current?.update()                 // update scroll calculations
+  }
+  const getScrollerRef = () => {
+    let ref = scrollerRef.current?.scrollRef      // get ref of main scroller box to contol manualy
+  }
+  const getProperties = () => {
+    if (!scrollerRef.current) return
+    let properties: IScrollerProperties = scrollerRef.current?.getProperties() // get properties of scroller object
+  }
+
+
+```
 
 ### License
 - React Scroll is licensed under the MIT License. Explore this to understand terms and conditions of the license- https://opensource.org/licenses/MIT
 
 Thank you for using my package!
-Max Nedelko
+
+Max Nedelko 2024

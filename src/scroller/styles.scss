@@ -162,7 +162,7 @@
   .scroller__bar {
     position: absolute;
     border-radius: 1rem;
-    background-color: lightgray;
+    background-color: rgba(211, 211, 211, 0.519);
     transition: .2s;
     display: none;
     z-index: 20;
@@ -176,7 +176,7 @@
 
     .scroller__bar_roller {
       border-radius: 1rem;
-      background-color: gray;
+      background-color: rgb(47, 47, 47);
       position: absolute;
       transition: opacity .2s;
 
