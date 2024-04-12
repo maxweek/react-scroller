@@ -18,8 +18,8 @@ It has a minimal load on the system, and has maximum performance, expandable and
 - Based on original browser scroll
 - Extendable
 - Auto updating on child changes
-- Events
-- Methods
+- Base Events
+- Base Methods
 - Ref with methods and properties (with interface)
 
 ## Todo
@@ -29,8 +29,11 @@ It has a minimal load on the system, and has maximum performance, expandable and
 - [x] Grab content
 - [x] Grab cursors and other visual features
 - [x] Class extending
-- [x] Methods
-- [x] Events
+- [x] Base Methods
+- [x] Base Events
+- [ ] More Methods
+- [ ] More Events
+- [ ] Inertia (custom scroll engine)
 
 ## Installation
 
@@ -194,6 +197,12 @@ Full usage you can see on https://github.com/maxweek/react-scroller
 
 ### License
 - React Scroll is licensed under the MIT License. Explore this to understand terms and conditions of the license- https://opensource.org/licenses/MIT
+
+### More
+
+Your issues on github
+
+Github https://github.com/maxweek/react-scroller
 
 Thank you for using my package!
 
