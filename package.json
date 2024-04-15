@@ -21,12 +21,12 @@
   "exports": {
     ".": {
       "import": {
-        "default": "./dist/react-scroller.js",
-        "types": "./dist/index.d.ts"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/react-scroller.js"
       },
       "require": {
-        "default": "./dist/react-scroller.umd.cjs",
-        "types": "./dist/index.d.ts"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/react-scroller.umd.cjs"
       }
     }
   },
