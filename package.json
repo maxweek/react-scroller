@@ -28,7 +28,8 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/react-scroller.umd.cjs"
       }
-    }
+    },
+    "./dist/style.css": "./dist/style.css"
   },
   "scripts": {
     "dev": "vite",
