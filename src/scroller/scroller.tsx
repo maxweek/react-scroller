@@ -4,6 +4,10 @@ import { getCl, getClR } from "./helper";
 import { IScroller, IScrollerProperties, IScrollerRef } from ".";
 
 
+interface _CustomWheelEvent extends WheelEvent {
+  wheelDeltaY: number
+}
+
 export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, ref) => {
   const SCROLL = useRef<IScrollerProperties>({
     height: 0,
@@ -189,12 +193,26 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
       mainRef.current.scrollTop += e.deltaY
     }
   }
-  const handleWheel = (e: WheelEvent) => {
+  const handleWheel = (ev: WheelEvent) => {
+    let e = ev as _CustomWheelEvent;
     if (e.shiftKey) return;
     if (!mainRef.current) return;
-    e.preventDefault()
-    mainRef.current.scrollLeft += e.deltaY / 4;
+    
+    let wheelDeltaY = e.wheelDeltaY as any
+    let isTrackpad = false;
+    
+    if (wheelDeltaY) {
+      if (wheelDeltaY === (e.deltaY * -3)) {
+        isTrackpad = true;
+      }
+    } else if (e.deltaMode === 0) {
+      isTrackpad = true;
+    }
 
+    if(!isTrackpad){
+      e.preventDefault()
+      mainRef.current.scrollLeft += e.deltaY / 4;
+    }
     set()
     checkRoller();
   }
