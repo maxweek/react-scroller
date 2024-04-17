@@ -12,6 +12,7 @@ It has a minimal load on the system, and has maximum performance, expandable and
 - Grab cursor
 - Interactive scrollbar
 - Variation of scrollbar positions
+- Trackpad detecting
 - Border padding and fading
 - Horizontal scroll by mouse wheel
 - Minimal processing
@@ -31,6 +32,8 @@ It has a minimal load on the system, and has maximum performance, expandable and
 - [x] Class extending
 - [x] Base Methods
 - [x] Base Events
+- [x] Required styles
+- [x] Trackpad detect
 - [ ] More Methods
 - [ ] More Events
 - [ ] Inertia (custom scroll engine)
@@ -45,6 +48,7 @@ npm i @maxweek/react-scroller
 
 ```ts
 import { Scroller } from "@maxweek/react-scroller";
+import "@maxweek/react-scroller/dist/styles.css";
 
 const YourComponent = () => {
   <Scroller>
@@ -58,6 +62,7 @@ const YourComponent = () => {
 
 ```ts
 import { IScrollerRef, Scroller, IScroller, IScrollerProperties } from "@maxweek/react-scroller";
+import "@maxweek/react-scroller/dist/styles.css";
 
 const YourComponent = () => {
   // Ref
@@ -113,6 +118,7 @@ Full usage you can see on https://github.com/maxweek/react-scroller
 
 ```js
   import { IScroller } from "./scroller/scroller"
+  import "@maxweek/react-scroller/dist/styles.css";
 
   const props: Partial<IScroller> = {
     needBar: true,
