@@ -48,7 +48,7 @@ npm i @maxweek/react-scroller
 
 ```ts
 import { Scroller } from "@maxweek/react-scroller";
-import "@maxweek/react-scroller/dist/styles.css";
+import "@maxweek/react-scroller/css";
 
 const YourComponent = () => {
   <Scroller>
@@ -62,7 +62,7 @@ const YourComponent = () => {
 
 ```ts
 import { IScrollerRef, Scroller, IScroller, IScrollerProperties } from "@maxweek/react-scroller";
-import "@maxweek/react-scroller/dist/styles.css";
+import "@maxweek/react-scroller/css";
 
 const YourComponent = () => {
   // Ref
@@ -118,7 +118,7 @@ Full usage you can see on https://github.com/maxweek/react-scroller
 
 ```js
   import { IScroller } from "./scroller/scroller"
-  import "@maxweek/react-scroller/dist/styles.css";
+  import "@maxweek/react-scroller/css";
 
   const props: Partial<IScroller> = {
     needBar: true,

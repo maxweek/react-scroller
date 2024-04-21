@@ -16,7 +16,7 @@
   "main": "./dist/react-scroller.umd.cjs",
   "module": "./dist/react-scroller.js",
   "files": [
-    "dist"
+    "dist/*"
   ],
   "exports": {
     ".": {
@@ -29,7 +29,7 @@
         "default": "./dist/react-scroller.umd.cjs"
       }
     },
-    "./dist/style.css": "./dist/style.css"
+    "./css": "./dist/style.css"
   },
   "scripts": {
     "dev": "vite",
