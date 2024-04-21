@@ -18,6 +18,7 @@
   "files": [
     "dist/*"
   ],
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
@@ -41,6 +42,14 @@
   "dependencies": {
     "sass": "^1.74.1"
   },
+  "keywords": [
+    "touch",
+    "scrollbar",
+    "horizontal",
+    "scroller",
+    "scroll",
+    "react"
+  ],
   "devDependencies": {
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.66",
