@@ -20,6 +20,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     grabDelta: 0,
     scrollStart: 0,
     hovered: false,
+    inited: false,
     bar: {
       height: 0,
       offset: 0,
@@ -37,9 +38,19 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
   useEffect(() => {
     window.addEventListener('pointerup', handleUp)
     window.addEventListener('pointermove', handleMove)
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      if(SCROLL.inited){
+        set()
+        checkRoller()
+      }
+    })
+    if(!mainRef.current) return;
+    resizeObserver.observe(mainRef.current);
     return () => {
       window.removeEventListener('pointerup', handleUp)
       window.removeEventListener('pointermove', handleMove)
+      resizeObserver.disconnect()
     }
   }, [])
 
@@ -246,6 +257,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
       SCROLL.boxHeight = mainRef.current.clientHeight
     }
     SCROLL.progress = SCROLL.top / (SCROLL.height - SCROLL.boxHeight)
+    SCROLL.inited = true
   }
 
   const getOffset = (e: PointerEvent) => {
@@ -270,7 +282,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     if (SCROLL.progress === 1) {
       props.onReachEnd?.()
     }
-    props.onScroll?.()
+    props.onScroll?.(SCROLL.progress)
   }
 
 

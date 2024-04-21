@@ -22,6 +22,7 @@ It has a minimal load on the system, and has maximum performance, expandable and
 - Base Events
 - Base Methods
 - Ref with methods and properties (with interface)
+- Observing self size and reiniting automatically
 
 ## Todo
 
@@ -34,6 +35,7 @@ It has a minimal load on the system, and has maximum performance, expandable and
 - [x] Base Events
 - [x] Required styles
 - [x] Trackpad detect
+- [x] ResizeObserver
 - [ ] More Methods
 - [ ] More Events
 - [ ] Inertia (custom scroll engine)
@@ -103,9 +105,9 @@ const YourComponent = () => {
     barClassName={'your-scroller-bar-class'}
     barRollerClassName={'your-scroller-bar-roller-class'}
     contentClassName={'your-scroller-content-class'}
-    onScroll={() => console.log('reach end')}
+    onScroll={(progress: number) => console.log(`scroll progress ${progress}`)}
     onReachStart={() => console.log('reach start')}
-    onReachEnd={() => console.log('scroll')}
+    onReachEnd={() => console.log('reach end')}
   >
     {/* Your content */}
   </Scroller>
@@ -132,9 +134,9 @@ Full usage you can see on https://github.com/maxweek/react-scroller
     barClassName: 'your-scroller-bar-class',
     barRollerClassName: 'your-scroller-bar-roller-class',
     contentClassName: 'your-scroller-content-class',
-    onScroll: () => console.log('reach end'),
-    onReachStart: () => console.log('reach start'),
-    onReachEnd: () => console.log('scroll'),
+    onScroll={(progress: number) => console.log(`scroll progress ${progress}`)}
+    onReachStart={() => console.log('reach start')}
+    onReachEnd={() => console.log('reach end')}
   }
 
 ```
@@ -162,7 +164,7 @@ Full usage you can see on https://github.com/maxweek/react-scroller
     <tr><td>barClassName?</td><td>string</td><td>''</td><td>class for scrollbar</td></tr>
     <tr><td>barRollerClassName?</td><td>string</td><td>''</td><td>class for scrollbar roller</td></tr>
     <tr><td>contentClassName?</td><td>string</td><td>''</td><td>class for content wrapper</td></tr>
-    <tr><td>onScroll?</td><td>event</td><td>() => {}</td><td>Event on 'scroll'</td></tr>
+    <tr><td>onScroll?</td><td>event</td><td>(progress: number) => {}</td><td>Event on 'scroll', `progress` prop is the interpolation of scroll progress from 0 to 1</td></tr>
     <tr><td>onReachStart?</td><td>event</td><td>() => {}</td><td>Event on 'scroll' reaches start</td></tr>
     <tr><td>onReachEnd?</td><td>event</td><td>() => {}</td><td>Event on 'scroll' reaches end</td></tr>
   </tbody>
@@ -201,8 +203,6 @@ Full usage you can see on https://github.com/maxweek/react-scroller
 
 ```
 
-### License
-- React Scroll is licensed under the MIT License. Explore this to understand terms and conditions of the license- https://opensource.org/licenses/MIT
 
 ### More
 
@@ -213,3 +213,10 @@ Github https://github.com/maxweek/react-scroller
 Thank you for using my package!
 
 Max Nedelko 2024
+
+
+### Keywords 
+"touch", "scrollbar", "horizontal", "scroller", "scroll", "react"
+
+### License
+- React Scroll is licensed under the MIT License. Explore this to understand terms and conditions of the license- https://opensource.org/licenses/MIT

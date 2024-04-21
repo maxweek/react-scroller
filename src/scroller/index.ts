@@ -17,7 +17,7 @@ export interface IScroller {
     contentClassName?: string,
     onReachStart?: () => void;
     onReachEnd?: () => void;
-    onScroll?: () => void;
+    onScroll?: (progress: number) => void;
 }
 
 export interface IScrollerProperties {
@@ -31,6 +31,7 @@ export interface IScrollerProperties {
     grabDelta: number,
     scrollStart: number,
     hovered: boolean,
+    inited: boolean,
     bar: {
         height: number,
         offset: number,
