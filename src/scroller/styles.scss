@@ -28,12 +28,14 @@
   user-select: none;
   display: flex;
 
-  &.__autoHide {
+  &:not(.__autoHide) {
     &.__bar {
       .scroller__bar {
         transform: none !important;
       }
     }
+  }
+  &.__autoHide {
     &.__hovered {
       &.__bar {
         .scroller__bar {
