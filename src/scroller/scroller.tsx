@@ -292,6 +292,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     getCl(props.horizontal, 'horizontal'),
     getCl(props.needBar, 'bar'),
     getCl(props.grabCursor, 'grab'),
+    getCl(props.autoHide, 'autoHide'),
     getCl(props.barAltPosition, 'barAlt'),
     getCl(props.borderPadding, 'borderPadding'),
     getCl(props.borderFade, 'borderFade'),

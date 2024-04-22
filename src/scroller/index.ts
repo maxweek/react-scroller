@@ -10,6 +10,7 @@ export interface IScroller {
     grab?: boolean
     borderFade?: boolean,
     borderPadding?: boolean,
+    autoHide?: boolean,
     grabCursor?: boolean
     className?: string,
     barClassName?: string,

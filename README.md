@@ -99,6 +99,7 @@ const YourComponent = () => {
     horizontal={false}
     grab={true}
     borderFade={true}
+    autoHide={false}
     borderPadding={true}
     grabCursor={true}
     className={'your-scroller-class'}
@@ -127,6 +128,7 @@ Full usage you can see on https://github.com/maxweek/react-scroller
     barAltPosition: false,
     horizontal: false,
     grab: true,
+    autoHide: false,
     borderFade: true,
     borderPadding: true,
     grabCursor: true,
@@ -153,17 +155,18 @@ Full usage you can see on https://github.com/maxweek/react-scroller
   <tbody>
     <tr><td>children</td><td>ReactNode</td><td></td><td>React child</td></tr>
     <tr><td>ref?</td><td>IScrollerRef</td><td></td><td>Ref to control the element</td></tr>
-    <tr><td>needBar?</td><td>boolean</td><td>false</td><td>enables scrollbar</td></tr>
-    <tr><td>barAltPosition?</td><td>boolean</td><td>false</td><td>changes scrollbar position, default at right - changes to left, when horizontal enabled - changes bottom to top</td></tr>
-    <tr><td>horizontal?</td><td>boolean</td><td>false</td><td>makes your box scrolling horizontal</td></tr>
-    <tr><td>grab?</td><td>boolean</td><td>false</td><td>enables grabbing your scroll content</td></tr>
-    <tr><td>borderFade?</td><td>boolean</td><td>false</td><td>add fadding in directions of scroll by masking</td></tr>
-    <tr><td>borderPadding?</td><td>boolean</td><td>false</td><td>add padding in directions of scroll</td></tr>
-    <tr><td>grabCursor?</td><td>boolean</td><td>false</td><td>enables grab cursor on hover</td></tr>
-    <tr><td>className?</td><td>string</td><td>''</td><td>class for scroller box</td></tr>
-    <tr><td>barClassName?</td><td>string</td><td>''</td><td>class for scrollbar</td></tr>
-    <tr><td>barRollerClassName?</td><td>string</td><td>''</td><td>class for scrollbar roller</td></tr>
-    <tr><td>contentClassName?</td><td>string</td><td>''</td><td>class for content wrapper</td></tr>
+    <tr><td>needBar?</td><td>boolean</td><td>false</td><td>Enables scrollbar</td></tr>
+    <tr><td>barAltPosition?</td><td>boolean</td><td>false</td><td>Changes scrollbar position, default at right - changes to left, when horizontal enabled - changes bottom to top</td></tr>
+    <tr><td>horizontal?</td><td>boolean</td><td>false</td><td>Makes your box scrolling horizontal</td></tr>
+    <tr><td>grab?</td><td>boolean</td><td>false</td><td>Enables grabbing your scroll content</td></tr>
+    <tr><td>borderFade?</td><td>boolean</td><td>false</td><td>Addes fadding in directions of scroll by masking</td></tr>
+    <tr><td>borderPadding?</td><td>boolean</td><td>false</td><td>Addes padding in directions of scroll</td></tr>
+    <tr><td>autoHide?</td><td>boolean</td><td>false</td><td>Hides scrollbar if it is not hovered</td></tr>
+    <tr><td>grabCursor?</td><td>boolean</td><td>false</td><td>Enables grab cursor on hover</td></tr>
+    <tr><td>className?</td><td>string</td><td>''</td><td>CSS Class for scroller box</td></tr>
+    <tr><td>barClassName?</td><td>string</td><td>''</td><td>CSS Class for scrollbar</td></tr>
+    <tr><td>barRollerClassName?</td><td>string</td><td>''</td><td>CSS Class for scrollbar roller</td></tr>
+    <tr><td>contentClassName?</td><td>string</td><td>''</td><td>CSS Class for content wrapper</td></tr>
     <tr><td>onScroll?</td><td>event</td><td>(progress: number) => {}</td><td>Event on 'scroll', `progress` prop is the interpolation of scroll progress from 0 to 1</td></tr>
     <tr><td>onReachStart?</td><td>event</td><td>() => {}</td><td>Event on 'scroll' reaches start</td></tr>
     <tr><td>onReachEnd?</td><td>event</td><td>() => {}</td><td>Event on 'scroll' reaches end</td></tr>
