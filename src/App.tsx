@@ -46,7 +46,7 @@ function App() {
     <div className="app">
       <div className="app__inner">
         <div className="app__item">
-          <div className="app__item_title">
+          <div className="app__item_title" onClick={scrollerRef.current?.update}>
             Base scroll
           </div>
           <div className="app__item_box">

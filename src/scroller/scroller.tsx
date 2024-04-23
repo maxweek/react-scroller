@@ -147,8 +147,15 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     setHovered(SCROLL.hovered)
 
     mainRef.current?.classList.remove('__grabbing')
+
+    window.removeEventListener('touchmove', handleTouch)
   }
-  const handleMove = (e: PointerEvent) => {
+  const handleTouch = (e: TouchEvent) => {
+    if (e.cancelable && SCROLL.bar.clicked) {
+      e.preventDefault();
+    }
+  }
+  const handleMove = (e: PointerEvent| TouchEvent) => {
     if (!mainRef.current) return
     if (SCROLL.bar.clicked) {
       SCROLL.bar.offset = getOffset(e);
@@ -186,6 +193,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
   }
 
   const handleRollerDown = (e: PointerEvent) => {
+    window.addEventListener('touchmove', handleTouch, {passive: false})
     if (!mainRef.current) return;
     SCROLL.bar.clicked = true
     SCROLL.bar.offsetStart = getOffset(e)
@@ -260,8 +268,13 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     SCROLL.inited = true
   }
 
-  const getOffset = (e: PointerEvent) => {
-    return props.horizontal ? e.x : e.y
+  const getOffset = (e: PointerEvent | TouchEvent) => {
+    if ('x' in e) {
+      return props.horizontal ? e.x : e.y;
+    } else {
+      const touch = e.touches[0];
+      return props.horizontal ? touch.clientX : touch.clientY;
+    }
   }
 
   const checkRoller = () => {
