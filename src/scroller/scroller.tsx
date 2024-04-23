@@ -38,6 +38,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
   useEffect(() => {
     window.addEventListener('pointerup', handleUp)
     window.addEventListener('pointermove', handleMove)
+    window.addEventListener('touchmove', handleTouch, {passive: false})
 
     const resizeObserver = new ResizeObserver((entries) => {
       if(SCROLL.inited){
@@ -50,6 +51,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     return () => {
       window.removeEventListener('pointerup', handleUp)
       window.removeEventListener('pointermove', handleMove)
+      window.removeEventListener('touchmove', handleTouch)
       resizeObserver.disconnect()
     }
   }, [])
@@ -147,10 +149,9 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     setHovered(SCROLL.hovered)
 
     mainRef.current?.classList.remove('__grabbing')
-
-    window.removeEventListener('touchmove', handleTouch)
   }
   const handleTouch = (e: TouchEvent) => {
+    
     if (e.cancelable && SCROLL.bar.clicked) {
       e.preventDefault();
     }
@@ -193,7 +194,6 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
   }
 
   const handleRollerDown = (e: PointerEvent) => {
-    window.addEventListener('touchmove', handleTouch, {passive: false})
     if (!mainRef.current) return;
     SCROLL.bar.clicked = true
     SCROLL.bar.offsetStart = getOffset(e)
