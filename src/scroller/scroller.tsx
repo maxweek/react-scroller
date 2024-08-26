@@ -15,6 +15,8 @@ export interface IScroller {
   barClassName?: string,
   barRollerClassName?: string,
   contentClassName?: string,
+  ref?: any,
+  showWhenMinimal?: boolean
   onReachStart?: () => void;
   onReachEnd?: () => void;
   onScroll?: () => void;
@@ -151,24 +153,27 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
   }
 
 
-  useImperativeHandle(ref, () => ({
-    scrollTo: (offset: number) => {
-      scrollTo(offset);
-    },
-    scrollToStart: () => {
-      scrollTo(0)
-    },
-    scrollToEnd: () => {
-      scrollTo(SCROLL.height)
-    },
-    update: () => {
-      update();
-    },
-    getProperties: () => {
-      return SCROLL
-    },
-    scrollRef: mainRef,
-  }));
+  useImperativeHandle(ref, () => {
+    console.log(ref, 'TEST')
+    return {
+      scrollTo: (offset: number) => {
+        scrollTo(offset);
+      },
+      scrollToStart: () => {
+        scrollTo(0)
+      },
+      scrollToEnd: () => {
+        scrollTo(SCROLL.height)
+      },
+      update: () => {
+        update();
+      },
+      getProperties: () => {
+        return SCROLL
+      },
+      scrollRef: mainRef,
+    }
+  });
 
 
   const handleUp = (e: PointerEvent) => {
@@ -251,8 +256,15 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
   }
 
   const handlePointerEnter = () => {
-    SCROLL.hovered = true
-    setHovered(true)
+    if(!props.showWhenMinimal){
+      if(SCROLL.height > SCROLL.boxHeight){
+        SCROLL.hovered = true
+        setHovered(true)
+      }
+    } else {
+      SCROLL.hovered = true
+      setHovered(true)
+    }
   }
   const handlePointerLeave = () => {
     SCROLL.hovered = false

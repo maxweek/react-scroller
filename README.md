@@ -94,6 +94,7 @@ const YourComponent = () => {
     borderFade={true}
     borderPadding={true}
     grabCursor={true}
+    showWhenMinimal={true}
     className={'your-scroller-class'}
     barClassName={'your-scroller-bar-class'}
     barRollerClassName={'your-scroller-bar-roller-class'}
@@ -122,6 +123,7 @@ Full usage you can see on https://github.com/maxweek/react-scroller
     borderFade: true,
     borderPadding: true,
     grabCursor: true,
+    showWhenMinimal: true,
     className: 'your-scroller-class',
     barClassName: 'your-scroller-bar-class',
     barRollerClassName: 'your-scroller-bar-roller-class',
@@ -152,6 +154,7 @@ Full usage you can see on https://github.com/maxweek/react-scroller
     <tr><td>borderFade?</td><td>boolean</td><td>false</td><td>add fadding in directions of scroll by masking</td></tr>
     <tr><td>borderPadding?</td><td>boolean</td><td>false</td><td>add padding in directions of scroll</td></tr>
     <tr><td>grabCursor?</td><td>boolean</td><td>false</td><td>enables grab cursor on hover</td></tr>
+    <tr><td>showWhenMinimal??</td><td>boolean</td><td>true</td><td>enables bar on hover, when the scroll height smaller than box height</td></tr>
     <tr><td>className?</td><td>string</td><td>''</td><td>class for scroller box</td></tr>
     <tr><td>barClassName?</td><td>string</td><td>''</td><td>class for scrollbar</td></tr>
     <tr><td>barRollerClassName?</td><td>string</td><td>''</td><td>class for scrollbar roller</td></tr>
