@@ -1,7 +1,7 @@
 {
   "name": "@maxweek/react-scroller",
   "description": "Make your blocks scrolling easy, with a custom scroll-bar, based on native browser scroll",
-  "version": "1.1.2",
+  "version": "1.1.18",
   "type": "module",
   "author": "Max Nedelko",
   "license": "MIT",
@@ -16,19 +16,21 @@
   "main": "./dist/react-scroller.umd.cjs",
   "module": "./dist/react-scroller.js",
   "files": [
-    "dist"
+    "dist/*"
   ],
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
-        "default": "./dist/react-scroller.js",
-        "types": "./dist/index.d.ts"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/react-scroller.js"
       },
       "require": {
-        "default": "./dist/react-scroller.umd.cjs",
-        "types": "./dist/index.d.ts"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/react-scroller.umd.cjs"
       }
-    }
+    },
+    "./css": "./dist/style.css"
   },
   "scripts": {
     "dev": "vite",
@@ -40,6 +42,14 @@
   "dependencies": {
     "sass": "^1.74.1"
   },
+  "keywords": [
+    "touch",
+    "scrollbar",
+    "horizontal",
+    "scroller",
+    "scroll",
+    "react"
+  ],
   "devDependencies": {
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.66",

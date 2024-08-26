@@ -26,11 +26,21 @@
   position: relative;
   overflow: hidden;
   user-select: none;
+  display: flex;
 
-  &.__hovered {
+  &:not(.__autoHide) {
     &.__bar {
       .scroller__bar {
         transform: none !important;
+      }
+    }
+  }
+  &.__autoHide {
+    &.__hovered {
+      &.__bar {
+        .scroller__bar {
+          transform: none !important;
+        }
       }
     }
   }
@@ -163,22 +173,21 @@
     position: absolute;
     border-radius: 1rem;
     background-color: rgba(211, 211, 211, 0.519);
-    transition: .2s;
+    transition: 0.2s;
     display: none;
     z-index: 20;
 
     &:before {
-      content: '';
+      content: "";
       position: absolute;
       // background-color: red;
     }
-
 
     .scroller__bar_roller {
       border-radius: 1rem;
       background-color: rgb(47, 47, 47);
       position: absolute;
-      transition: opacity .2s;
+      transition: opacity 0.2s;
 
       &:hover {
         opacity: 0.6;
@@ -186,7 +195,7 @@
       }
 
       &:active {
-        cursor: grabbing
+        cursor: grabbing;
       }
     }
   }
@@ -196,7 +205,13 @@
 
     &.__borderFade {
       .scroller__content {
-        mask-image: linear-gradient(to right, transparent 0, black $offset, black calc(100% - $offset), transparent 100%);
+        mask-image: linear-gradient(
+          to right,
+          transparent 0,
+          black $offset,
+          black calc(100% - $offset),
+          transparent 100%
+        );
       }
     }
 
@@ -220,7 +235,13 @@
 
     &.__borderFade {
       .scroller__content {
-        mask-image: linear-gradient(to bottom, transparent 0, black $offset, black calc(100% - $offset), transparent 100%);
+        mask-image: linear-gradient(
+          to bottom,
+          transparent 0,
+          black $offset,
+          black calc(100% - $offset),
+          transparent 100%
+        );
       }
     }
 

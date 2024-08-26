@@ -1,54 +1,11 @@
-import React, { FC, ReactNode, WheelEventHandler, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import "./styles.scss"
 import { getCl, getClR } from "./helper";
+import { IScroller, IScrollerProperties, IScrollerRef } from ".";
 
-export interface IScroller {
-  children: ReactNode,
-  needBar?: boolean,
-  barAltPosition?: boolean
-  horizontal?: boolean
-  grab?: boolean
-  borderFade?: boolean,
-  borderPadding?: boolean,
-  grabCursor?: boolean
-  className?: string,
-  barClassName?: string,
-  barRollerClassName?: string,
-  contentClassName?: string,
-  ref?: any,
-  showWhenMinimal?: boolean
-  onReachStart?: () => void;
-  onReachEnd?: () => void;
-  onScroll?: () => void;
-}
 
-export interface IScrollerProperties {
-  height: number,
-  top: number,
-  boxHeight: number,
-  progress: number,
-  grab: boolean,
-  grabOffset: number,
-  grabStart: number,
-  grabDelta: number,
-  scrollStart: number,
-  hovered: boolean,
-  bar: {
-    height: number,
-    offset: number,
-    offsetStart: number,
-    offsetDelta: number,
-    clicked: boolean
-  }
-}
-
-export interface IScrollerRef {
-  scrollTo: (offset: number) => void;
-  scrollToStart: () => void;
-  scrollToEnd: () => void;
-  update: () => void;
-  getProperties: () => IScrollerProperties;
-  scrollRef: React.RefObject<HTMLDivElement>;
+interface _CustomWheelEvent extends WheelEvent {
+  wheelDeltaY: number
 }
 
 export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, ref) => {
@@ -63,6 +20,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     grabDelta: 0,
     scrollStart: 0,
     hovered: false,
+    inited: false,
     bar: {
       height: 0,
       offset: 0,
@@ -80,9 +38,21 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
   useEffect(() => {
     window.addEventListener('pointerup', handleUp)
     window.addEventListener('pointermove', handleMove)
+    window.addEventListener('touchmove', handleTouch, {passive: false})
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      if(SCROLL.inited){
+        set()
+        checkRoller()
+      }
+    })
+    if(!mainRef.current) return;
+    resizeObserver.observe(mainRef.current);
     return () => {
       window.removeEventListener('pointerup', handleUp)
       window.removeEventListener('pointermove', handleMove)
+      window.removeEventListener('touchmove', handleTouch)
+      resizeObserver.disconnect()
     }
   }, [])
 
@@ -183,7 +153,13 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
 
     mainRef.current?.classList.remove('__grabbing')
   }
-  const handleMove = (e: PointerEvent) => {
+  const handleTouch = (e: TouchEvent) => {
+    
+    if (e.cancelable && SCROLL.bar.clicked) {
+      e.preventDefault();
+    }
+  }
+  const handleMove = (e: PointerEvent| TouchEvent) => {
     if (!mainRef.current) return
     if (SCROLL.bar.clicked) {
       SCROLL.bar.offset = getOffset(e);
@@ -239,12 +215,26 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
       mainRef.current.scrollTop += e.deltaY
     }
   }
-  const handleWheel = (e: WheelEvent) => {
+  const handleWheel = (ev: WheelEvent) => {
+    let e = ev as _CustomWheelEvent;
     if (e.shiftKey) return;
     if (!mainRef.current) return;
-    e.preventDefault()
-    mainRef.current.scrollLeft += e.deltaY / 4;
+    
+    let wheelDeltaY = e.wheelDeltaY as any
+    let isTrackpad = false;
+    
+    if (wheelDeltaY) {
+      if (wheelDeltaY === (e.deltaY * -3)) {
+        isTrackpad = true;
+      }
+    } else if (e.deltaMode === 0) {
+      isTrackpad = true;
+    }
 
+    if(!isTrackpad){
+      e.preventDefault()
+      mainRef.current.scrollLeft += e.deltaY / 4;
+    }
     set()
     checkRoller();
   }
@@ -285,10 +275,16 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
       SCROLL.boxHeight = mainRef.current.clientHeight
     }
     SCROLL.progress = SCROLL.top / (SCROLL.height - SCROLL.boxHeight)
+    SCROLL.inited = true
   }
 
-  const getOffset = (e: PointerEvent) => {
-    return props.horizontal ? e.x : e.y
+  const getOffset = (e: PointerEvent | TouchEvent) => {
+    if ('x' in e) {
+      return props.horizontal ? e.x : e.y;
+    } else {
+      const touch = e.touches[0];
+      return props.horizontal ? touch.clientX : touch.clientY;
+    }
   }
 
   const checkRoller = () => {
@@ -309,7 +305,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     if (SCROLL.progress === 1) {
       props.onReachEnd?.()
     }
-    props.onScroll?.()
+    props.onScroll?.(SCROLL.progress)
   }
 
 
@@ -319,6 +315,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     getCl(props.horizontal, 'horizontal'),
     getCl(props.needBar, 'bar'),
     getCl(props.grabCursor, 'grab'),
+    getCl(props.autoHide, 'autoHide'),
     getCl(props.barAltPosition, 'barAlt'),
     getCl(props.borderPadding, 'borderPadding'),
     getCl(props.borderFade, 'borderFade'),
