@@ -69,6 +69,7 @@ function App() {
             <Scroller
               horizontal={false}
               needBar={true}
+              autoHide={true}
               // onReachEnd={() => console.log('reach end')}
               // onReachStart={() => console.log('reach start')}
             >
@@ -89,7 +90,8 @@ function App() {
             <Scroller
               horizontal={false}
               needBar={true}
-              showWhenMinimal={true}
+              autoHide={true}
+              // showWhenMinimal={true}
               onReachEnd={() => console.log('reach end')}
               onReachStart={() => console.log('reach start')}
             >

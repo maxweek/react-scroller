@@ -3,7 +3,7 @@ import { Scroller } from "./scroller";
 
 
 export interface IScroller {
-  children: ReactNode,
+  children?: ReactNode,
   needBar?: boolean,
   barAltPosition?: boolean
   horizontal?: boolean
