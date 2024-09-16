@@ -30,15 +30,16 @@
 
   &:not(.__autoHide) {
     &.__bar {
-      .scroller__bar {
+      &>.scroller__bar {
         transform: none !important;
       }
     }
   }
+
   &.__autoHide {
     &.__hovered {
       &.__bar {
-        .scroller__bar {
+        &>.scroller__bar {
           transform: none !important;
         }
       }
@@ -46,7 +47,7 @@
   }
 
   &.__grab {
-    .scroller__content {
+    &>.scroller__content {
       cursor: grab;
     }
   }
@@ -58,7 +59,7 @@
 
     &:not(.__horizontal) {
       &:not(.__barAlt) {
-        &> .scroller__bar {
+        &>.scroller__bar {
           right: 0.25rem;
           top: 0.25rem;
           bottom: 0.25rem;
@@ -76,7 +77,7 @@
             width: 0.5rem;
           }
 
-          .scroller__bar_roller {
+          &>.scroller__bar_roller {
             right: 0;
             width: 100%;
             min-height: 1rem;
@@ -103,7 +104,7 @@
             width: 0.5rem;
           }
 
-          .scroller__bar_roller {
+          &>.scroller__bar_roller {
             left: 0;
             width: 100%;
             min-height: 1rem;
@@ -134,7 +135,7 @@
             width: auto;
           }
 
-          .scroller__bar_roller {
+          &>.scroller__bar_roller {
             bottom: 0;
             height: 100%;
             min-width: 1rem;
@@ -163,7 +164,7 @@
             width: auto;
           }
 
-          .scroller__bar_roller {
+          &>.scroller__bar_roller {
             top: 0;
             height: 100%;
             min-width: 1rem;
@@ -173,7 +174,7 @@
     }
   }
 
-  .scroller__bar {
+  &>.scroller__bar {
     position: absolute;
     border-radius: 1rem;
     background-color: rgba(211, 211, 211, 0.519);
@@ -187,7 +188,7 @@
       // background-color: red;
     }
 
-    .scroller__bar_roller {
+    &>.scroller__bar_roller {
       border-radius: 1rem;
       background-color: rgb(47, 47, 47);
       position: absolute;
@@ -209,13 +210,11 @@
 
     &.__borderFade {
       &>.scroller__content {
-        mask-image: linear-gradient(
-          to right,
-          transparent 0,
-          black $offset,
-          black calc(100% - $offset),
-          transparent 100%
-        );
+        mask-image: linear-gradient(to right,
+            transparent 0,
+            black $offset,
+            black calc(100% - $offset),
+            transparent 100%);
       }
     }
 
@@ -239,13 +238,11 @@
 
     &.__borderFade {
       &>.scroller__content {
-        mask-image: linear-gradient(
-          to bottom,
-          transparent 0,
-          black $offset,
-          black calc(100% - $offset),
-          transparent 100%
-        );
+        mask-image: linear-gradient(to bottom,
+            transparent 0,
+            black $offset,
+            black calc(100% - $offset),
+            transparent 100%);
       }
     }
 
@@ -256,7 +253,7 @@
       }
     }
 
-    .scroller__content {
+    &>.scroller__content {
       @include scrollWithoutScroll();
       max-height: 100%;
       width: 100%;
@@ -264,8 +261,9 @@
     }
   }
 
-  .scroller__content {
+  &>.scroller__content {
     display: flex;
+
     &.__grabbing {
       cursor: grabbing;
     }
