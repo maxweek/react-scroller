@@ -58,7 +58,7 @@
 
     &:not(.__horizontal) {
       &:not(.__barAlt) {
-        .scroller__bar {
+        &> .scroller__bar {
           right: 0.25rem;
           top: 0.25rem;
           bottom: 0.25rem;
@@ -85,7 +85,7 @@
       }
 
       &.__barAlt {
-        .scroller__bar {
+        &>.scroller__bar {
           left: 0.25rem;
           top: 0.25rem;
           bottom: 0.25rem;
@@ -114,7 +114,7 @@
 
     &.__horizontal {
       &:not(.__barAlt) {
-        .scroller__bar {
+        &>.scroller__bar {
           left: 0.25rem;
           right: 0.25rem;
           bottom: 0.25rem;
@@ -143,11 +143,12 @@
       }
 
       &.__barAlt {
-        .scroller__bar {
+        &>.scroller__bar {
           left: 0.25rem;
           right: 0.25rem;
           top: 0.25rem;
           height: 0.15rem;
+          width: auto;
           transform: translateY(-1rem);
 
           &:before {
@@ -159,6 +160,7 @@
 
           &:hover {
             height: 0.5rem;
+            width: auto;
           }
 
           .scroller__bar_roller {
@@ -206,7 +208,7 @@
     $offset: 1rem;
 
     &.__borderFade {
-      .scroller__content {
+      &>.scroller__content {
         mask-image: linear-gradient(
           to right,
           transparent 0,
@@ -218,13 +220,13 @@
     }
 
     &.__borderPadding {
-      .scroller__content {
+      &>.scroller__content {
         padding-left: $offset;
         padding-right: $offset;
       }
     }
 
-    .scroller__content {
+    &>.scroller__content {
       @include scrollWithoutScrollHorizontal();
       max-width: 100%;
       $offset: 1rem;
@@ -236,7 +238,7 @@
     $offset: 1rem;
 
     &.__borderFade {
-      .scroller__content {
+      &>.scroller__content {
         mask-image: linear-gradient(
           to bottom,
           transparent 0,
@@ -248,7 +250,7 @@
     }
 
     &.__borderPadding {
-      .scroller__content {
+      &>.scroller__content {
         padding-top: $offset;
         padding-bottom: $offset;
       }
