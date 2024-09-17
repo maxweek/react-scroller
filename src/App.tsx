@@ -175,6 +175,7 @@ function App() {
               needBar={true}
               autoHide={true}
               barAltPosition={true}
+              
               // showWhenMinimal={true}
               onReachEnd={() => console.log('reach end')}
               onReachStart={() => console.log('reach start')}

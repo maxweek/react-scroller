@@ -219,6 +219,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     let e = ev as _CustomWheelEvent;
     if (e.shiftKey) return;
     if (!mainRef.current) return;
+    if(props.horizontal && !props.horizontalScroll) return
     
     let wheelDeltaY = e.wheelDeltaY as any
     let isTrackpad = false;
@@ -239,6 +240,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     checkRoller();
   }
   const handleScroll = (e: Event) => {
+    // if(props.horizontal && !props.horizontalScroll) return
     e.stopPropagation();
 
     set()

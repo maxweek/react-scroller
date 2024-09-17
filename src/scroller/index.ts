@@ -7,6 +7,7 @@ export interface IScroller {
   needBar?: boolean,
   barAltPosition?: boolean
   horizontal?: boolean
+  horizontalScroll?: boolean
   grab?: boolean
   borderFade?: boolean,
   borderPadding?: boolean,
