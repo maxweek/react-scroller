@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import "./styles.scss"
 import { getCl, getClR } from "./helper";
 import { IScroller, IScrollerProperties, IScrollerRef } from ".";
