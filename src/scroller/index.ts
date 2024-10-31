@@ -45,9 +45,9 @@ export interface IScrollerProperties {
 }
 
 export interface IScrollerRef {
-  scrollTo: (offset: number) => void;
-  scrollToStart: () => void;
-  scrollToEnd: () => void;
+  scrollTo: (offset: number, duration?: number) => void;
+  scrollToStart: (duration?: number) => void;
+  scrollToEnd: (duration?: number) => void;
   update: () => void;
   getProperties: () => IScrollerProperties;
   scrollRef: React.RefObject<HTMLDivElement>;
