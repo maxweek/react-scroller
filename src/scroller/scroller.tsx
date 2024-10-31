@@ -38,15 +38,15 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
   useEffect(() => {
     window.addEventListener('pointerup', handleUp)
     window.addEventListener('pointermove', handleMove)
-    window.addEventListener('touchmove', handleTouch, {passive: false})
+    window.addEventListener('touchmove', handleTouch, { passive: false })
 
     const resizeObserver = new ResizeObserver((entries) => {
-      if(SCROLL.inited){
+      if (SCROLL.inited) {
         set()
         checkRoller()
       }
     })
-    if(!mainRef.current) return;
+    if (!mainRef.current) return;
     resizeObserver.observe(mainRef.current);
     return () => {
       window.removeEventListener('pointerup', handleUp)
@@ -109,31 +109,47 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     checkRoller();
   }
 
-  const scrollTo = (offset: number) => {
+  const scrollTo = (offset: number, duration = 300) => {
     if (!mainRef.current) return;
-    let scrl: any = {
-      behavior: 'smooth'
-    }
-    if (props.horizontal) {
-      scrl.left = offset
-    } else {
-      scrl.top = offset
-    }
-    mainRef.current.scrollTo(scrl)
-  }
+  
+    const isHorizontal = props.horizontal;
+    const start = isHorizontal ? mainRef.current.scrollLeft : mainRef.current.scrollTop;
+    const distance = offset - start;
+    const startTime = performance.now();
+  
+    const animateScroll = (currentTime: number) => {
+      if (!mainRef.current) return;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+  
+      // Линейная интерполяция для плавной прокрутки
+      const newPosition = start + distance * progress;
+  
+      if (isHorizontal) {
+        mainRef.current.scrollLeft = newPosition;
+      } else {
+        mainRef.current.scrollTop = newPosition;
+      }
+  
+      if (timeElapsed < duration) {
+        requestAnimationFrame(animateScroll);
+      }
+    };
+  
+    requestAnimationFrame(animateScroll);
+  };
 
 
   useImperativeHandle(ref, () => {
-    console.log(ref, 'TEST')
     return {
-      scrollTo: (offset: number) => {
-        scrollTo(offset);
+      scrollTo: (offset: number, duration?: number) => {
+        scrollTo(offset, duration);
       },
-      scrollToStart: () => {
-        scrollTo(0)
+      scrollToStart: (duration?: number) => {
+        scrollTo(0, duration)
       },
-      scrollToEnd: () => {
-        scrollTo(SCROLL.height)
+      scrollToEnd: (duration?: number) => {
+        scrollTo(SCROLL.height, duration)
       },
       update: () => {
         update();
@@ -154,12 +170,12 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     mainRef.current?.classList.remove('__grabbing')
   }
   const handleTouch = (e: TouchEvent) => {
-    
+
     if (e.cancelable && SCROLL.bar.clicked) {
       e.preventDefault();
     }
   }
-  const handleMove = (e: PointerEvent| TouchEvent) => {
+  const handleMove = (e: PointerEvent | TouchEvent) => {
     if (!mainRef.current) return
     if (SCROLL.bar.clicked) {
       SCROLL.bar.offset = getOffset(e);
@@ -219,11 +235,11 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     let e = ev as _CustomWheelEvent;
     if (e.shiftKey) return;
     if (!mainRef.current) return;
-    if(props.horizontal && !props.horizontalScroll) return
-    
+    if (props.horizontal && !props.horizontalScroll) return
+
     let wheelDeltaY = e.wheelDeltaY as any
     let isTrackpad = false;
-    
+
     if (wheelDeltaY) {
       if (wheelDeltaY === (e.deltaY * -3)) {
         isTrackpad = true;
@@ -232,7 +248,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
       isTrackpad = true;
     }
 
-    if(!isTrackpad){
+    if (!isTrackpad) {
       e.preventDefault()
       mainRef.current.scrollLeft += e.deltaY / 4;
     }
@@ -248,8 +264,8 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
   }
 
   const handlePointerEnter = () => {
-    if(!props.showWhenMinimal){
-      if(SCROLL.height > SCROLL.boxHeight){
+    if (!props.showWhenMinimal) {
+      if (SCROLL.height > SCROLL.boxHeight) {
         SCROLL.hovered = true
         setHovered(true)
       }

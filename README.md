@@ -36,6 +36,7 @@ It has a minimal load on the system, and has maximum performance, expandable and
 - [x] Required styles
 - [x] Trackpad detect
 - [x] ResizeObserver
+- [x] Scrolling Duration
 - [ ] More Methods
 - [ ] More Events
 - [ ] Inertia (custom scroll engine)
@@ -107,9 +108,9 @@ const YourComponent = () => {
     barClassName={'your-scroller-bar-class'}
     barRollerClassName={'your-scroller-bar-roller-class'}
     contentClassName={'your-scroller-content-class'}
-    onScroll={(progress: number) => console.log(`scroll progress ${progress}`)}
-    onReachStart={() => console.log('reach start')}
-    onReachEnd={() => console.log('reach end')}
+    onScroll={(progress: number, duration?: number) => console.log(`scroll progress ${progress}`)}
+    onReachStart={(duration?: number) => console.log('reach start')}
+    onReachEnd={(duration?: number) => console.log('reach end')}
   >
     {/* Your content */}
   </Scroller>
@@ -187,13 +188,13 @@ Full usage you can see on https://github.com/maxweek/react-scroller
 
   // Methods
   const scrollToStart = () => {
-    scrollerRef.current?.scrollToStart()          // scroll to start
+    scrollerRef.current?.scrollToStart(2000)          // scroll to start
   }
   const scrollToEnd = () => {
-    scrollerRef.current?.scrollToEnd()            // scroll to end
+    scrollerRef.current?.scrollToEnd(2000)            // scroll to end
   }
   const scrollTo = () => {
-    scrollerRef.current?.scrollTo(100)            // scroll to 100px
+    scrollerRef.current?.scrollTo(100, 2000)            // scroll to 100px
   }
   const update = () => {
     scrollerRef.current?.update()                 // update scroll calculations
