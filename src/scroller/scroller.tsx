@@ -1,144 +1,218 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import "./styles.scss"
+import "./styles.scss";
 import { getCl, getClR } from "./helper";
 import { IScroller, IScrollerProperties, IScrollerRef } from ".";
 
-
 interface _CustomWheelEvent extends WheelEvent {
-  wheelDeltaY: number
+  wheelDeltaY: number;
 }
 
 export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, ref) => {
   const SCROLL = useRef<IScrollerProperties>({
     height: 0,
+    width: 0,
     top: 0,
+    left: 0,
     boxHeight: 0,
-    progress: 0,
+    boxWidth: 0,
+    progressX: 0,
+    progressY: 0,
     grab: false,
     grabOffset: 0,
-    grabStart: 0,
-    grabDelta: 0,
-    scrollStart: 0,
+    grabStartX: 0,
+    grabStartY: 0,
+    grabDeltaX: 0,
+    grabDeltaY: 0,
+    scrollStartX: 0,
+    scrollStartY: 0,
     hovered: false,
     inited: false,
-    bar: {
-      height: 0,
+    barX: {
+      size: 0,
       offset: 0,
       offsetStart: 0,
       offsetDelta: 0,
-      clicked: false
-    }
-  }).current
+      clicked: false,
+    },
+    barY: {
+      size: 0,
+      offset: 0,
+      offsetStart: 0,
+      offsetDelta: 0,
+      clicked: false,
+    },
+  }).current;
   const mainRef = useRef<HTMLDivElement>(null);
-  const barRef = useRef<HTMLDivElement>(null);
-  const rollerRef = useRef<HTMLDivElement>(null);
+  const verticalBarRef = useRef<HTMLDivElement>(null);
+  const horizontalBarRef = useRef<HTMLDivElement>(null);
+  const verticalRollerRef = useRef<HTMLDivElement>(null);
+  const horizontalRollerRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState<boolean>(false);
 
-
   useEffect(() => {
-    window.addEventListener('pointerup', handleUp)
-    window.addEventListener('pointermove', handleMove)
-    window.addEventListener('touchmove', handleTouch, { passive: false })
+    const handleUp = (e: PointerEvent) => {
+      SCROLL.barX.clicked = false;
+      SCROLL.barY.clicked = false;
+      SCROLL.grab = false;
+      setHovered(SCROLL.hovered);
+      mainRef.current?.classList.remove("__grabbing");
+    };
+
+    const handleMove = (e: PointerEvent | TouchEvent) => {
+      if (!mainRef.current) return;
+      if (SCROLL.barX.clicked || SCROLL.barY.clicked) {
+        const offset = getOffset(e);
+        if (SCROLL.barX.clicked) {
+          SCROLL.barX.offset = offset.x;
+          SCROLL.barX.offsetDelta = SCROLL.barX.offsetStart - SCROLL.barX.offset;
+          mainRef.current.scrollLeft = SCROLL.scrollStartX + (-SCROLL.barX.offsetDelta / SCROLL.boxWidth) * (SCROLL.width - SCROLL.boxWidth);
+        }
+        if (SCROLL.barY.clicked) {
+          SCROLL.barY.offset = offset.y;
+          SCROLL.barY.offsetDelta = SCROLL.barY.offsetStart - SCROLL.barY.offset;
+          mainRef.current.scrollTop = SCROLL.scrollStartY + (-SCROLL.barY.offsetDelta / SCROLL.boxHeight) * (SCROLL.height - SCROLL.boxHeight);
+        }
+      }
+      if (SCROLL.grab) {
+        const offset = getOffset(e);
+        if (props.horizontal) {
+          SCROLL.grabDeltaX = SCROLL.grabStartX - offset.x;
+          mainRef.current.scrollLeft = SCROLL.scrollStartX + SCROLL.grabDeltaX;
+        }
+        if (props.vertical) {
+          SCROLL.grabDeltaY = SCROLL.grabStartY - offset.y;
+          mainRef.current.scrollTop = SCROLL.scrollStartY + SCROLL.grabDeltaY;
+        }
+      }
+    };
+
+    const handleTouch = (e: TouchEvent) => {
+      if (e.cancelable && (SCROLL.barX.clicked || SCROLL.barY.clicked)) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener("pointerup", handleUp);
+    window.addEventListener("pointermove", handleMove);
+    window.addEventListener("touchmove", handleTouch, { passive: false });
 
     const resizeObserver = new ResizeObserver((entries) => {
       if (SCROLL.inited) {
-        set()
-        checkRoller()
+        set();
+        checkRoller();
       }
-    })
+    });
     if (!mainRef.current) return;
     resizeObserver.observe(mainRef.current);
     return () => {
-      window.removeEventListener('pointerup', handleUp)
-      window.removeEventListener('pointermove', handleMove)
-      window.removeEventListener('touchmove', handleTouch)
-      resizeObserver.disconnect()
-    }
-  }, [])
+      window.removeEventListener("pointerup", handleUp);
+      window.removeEventListener("pointermove", handleMove);
+      window.removeEventListener("touchmove", handleTouch);
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
-    let mainRefCur = mainRef.current
-    if (!mainRefCur) return
+    let mainRefCur = mainRef.current;
+    if (!mainRefCur) return;
     if (props.horizontal) {
-      mainRefCur.addEventListener('wheel', handleWheel)
+      mainRefCur.addEventListener("wheel", handleWheel);
     }
-    mainRefCur.addEventListener('scroll', handleScroll)
+    mainRefCur.addEventListener("scroll", handleScroll);
     if (props.grab) {
-      mainRefCur.addEventListener('pointerdown', handleRefDown)
+      mainRefCur.addEventListener("pointerdown", handleRefDown);
     }
     return () => {
-      if (!mainRefCur) return
-      mainRefCur.removeEventListener('scroll', handleScroll)
+      if (!mainRefCur) return;
+      mainRefCur.removeEventListener("scroll", handleScroll);
       if (props.horizontal) {
-        mainRefCur.removeEventListener('wheel', handleWheel)
+        mainRefCur.removeEventListener("wheel", handleWheel);
       }
       if (props.grab) {
-        mainRefCur.removeEventListener('pointerdown', handleRefDown)
+        mainRefCur.removeEventListener("pointerdown", handleRefDown);
       }
-    }
-  }, [mainRef.current])
+    };
+  }, [mainRef.current]);
 
   useEffect(() => {
-    let mainRefCur = rollerRef.current
-    if (!mainRefCur) return
-    mainRefCur.addEventListener('pointerdown', handleRollerDown)
+    let mainRefCur = verticalRollerRef.current;
+    if (!mainRefCur) return;
+    mainRefCur.addEventListener("pointerdown", handleVerticalRollerDown);
     return () => {
-      if (!mainRefCur) return
-      mainRefCur.removeEventListener('pointerdown', handleRollerDown)
-    }
-  }, [rollerRef.current])
+      if (!mainRefCur) return;
+      mainRefCur.removeEventListener("pointerdown", handleVerticalRollerDown);
+    };
+  }, [verticalRollerRef.current]);
 
   useEffect(() => {
-    let mainRefCur = barRef.current
-    if (!mainRefCur) return
-    mainRefCur.addEventListener('wheel', handleBarScroll)
+    let mainRefCur = horizontalRollerRef.current;
+    if (!mainRefCur) return;
+    mainRefCur.addEventListener("pointerdown", handleHorizontalRollerDown);
     return () => {
-      if (!mainRefCur) return
-      mainRefCur.removeEventListener('wheel', handleBarScroll)
-    }
-  }, [barRef.current])
+      if (!mainRefCur) return;
+      mainRefCur.removeEventListener("pointerdown", handleHorizontalRollerDown);
+    };
+  }, [horizontalRollerRef.current]);
 
   useEffect(() => {
-    set()
+    let mainRefCur = verticalBarRef.current;
+    if (!mainRefCur) return;
+    mainRefCur.addEventListener("wheel", handleBarScroll);
+    return () => {
+      if (!mainRefCur) return;
+      mainRefCur.removeEventListener("wheel", handleBarScroll);
+    };
+  }, [verticalBarRef.current]);
+
+  useEffect(() => {
+    let mainRefCur = horizontalBarRef.current;
+    if (!mainRefCur) return;
+    mainRefCur.addEventListener("wheel", handleBarScroll);
+    return () => {
+      if (!mainRefCur) return;
+      mainRefCur.removeEventListener("wheel", handleBarScroll);
+    };
+  }, [horizontalBarRef.current]);
+
+  useEffect(() => {
+    set();
     checkRoller();
-  }, [props.children])
-
+  }, [props.children]);
 
   const update = () => {
-    set()
+    set();
     checkRoller();
-  }
+  };
 
   const scrollTo = (offset: number, duration = 300) => {
     if (!mainRef.current) return;
-  
+
     const isHorizontal = props.horizontal;
     const start = isHorizontal ? mainRef.current.scrollLeft : mainRef.current.scrollTop;
     const distance = offset - start;
     const startTime = performance.now();
-  
+
     const animateScroll = (currentTime: number) => {
       if (!mainRef.current) return;
       const timeElapsed = currentTime - startTime;
       const progress = Math.min(timeElapsed / duration, 1);
-  
+
       // Линейная интерполяция для плавной прокрутки
       const newPosition = start + distance * progress;
-  
+
       if (isHorizontal) {
         mainRef.current.scrollLeft = newPosition;
       } else {
         mainRef.current.scrollTop = newPosition;
       }
-  
+
       if (timeElapsed < duration) {
         requestAnimationFrame(animateScroll);
       }
     };
-  
+
     requestAnimationFrame(animateScroll);
   };
-
 
   useImperativeHandle(ref, () => {
     return {
@@ -146,102 +220,74 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
         scrollTo(offset, duration);
       },
       scrollToStart: (duration?: number) => {
-        scrollTo(0, duration)
+        scrollTo(0, duration);
       },
       scrollToEnd: (duration?: number) => {
-        scrollTo(SCROLL.height, duration)
+        scrollTo(SCROLL.height, duration);
       },
       update: () => {
         update();
       },
       getProperties: () => {
-        return SCROLL
+        return SCROLL;
       },
       scrollRef: mainRef,
-    }
+    };
   });
-
-
-  const handleUp = (e: PointerEvent) => {
-    SCROLL.bar.clicked = false
-    SCROLL.grab = false
-    setHovered(SCROLL.hovered)
-
-    mainRef.current?.classList.remove('__grabbing')
-  }
-  const handleTouch = (e: TouchEvent) => {
-
-    if (e.cancelable && SCROLL.bar.clicked) {
-      e.preventDefault();
-    }
-  }
-  const handleMove = (e: PointerEvent | TouchEvent) => {
-    if (!mainRef.current) return
-    if (SCROLL.bar.clicked) {
-      SCROLL.bar.offset = getOffset(e);
-      SCROLL.bar.offsetDelta = SCROLL.bar.offsetStart - SCROLL.bar.offset;
-
-      if (props.horizontal) {
-        mainRef.current.scrollLeft = SCROLL.scrollStart + (-SCROLL.bar.offsetDelta / SCROLL.boxHeight * SCROLL.height)
-      } else {
-        mainRef.current.scrollTop = SCROLL.scrollStart + (-SCROLL.bar.offsetDelta / SCROLL.boxHeight * SCROLL.height)
-      }
-    }
-    if (SCROLL.grab) {
-      SCROLL.grabOffset = getOffset(e);
-      SCROLL.grabDelta = SCROLL.grabStart - SCROLL.grabOffset;
-
-      if (props.horizontal) {
-        mainRef.current.scrollLeft = SCROLL.scrollStart + (SCROLL.grabDelta)
-      } else {
-        mainRef.current.scrollTop = SCROLL.scrollStart + (SCROLL.grabDelta)
-      }
-    }
-  }
 
   const handleRefDown = (e: PointerEvent) => {
     if (!mainRef.current) return;
-    if (SCROLL.bar.clicked) return
-    SCROLL.grab = true
-    SCROLL.grabStart = getOffset(e)
+    if (SCROLL.barX.clicked || SCROLL.barY.clicked) return;
+    SCROLL.grab = true;
+    const offset = getOffset(e);
+    SCROLL.grabStartX = offset.x;
+    SCROLL.grabStartY = offset.y;
     if (props.horizontal) {
-      SCROLL.scrollStart = mainRef.current.scrollLeft
-    } else {
-      SCROLL.scrollStart = mainRef.current.scrollTop
+      SCROLL.scrollStartX = mainRef.current.scrollLeft;
     }
-    mainRef.current.classList.add('__grabbing')
-  }
+    if (props.vertical) {
+      SCROLL.scrollStartY = mainRef.current.scrollTop;
+    }
+    mainRef.current.classList.add("__grabbing");
+  };
 
-  const handleRollerDown = (e: PointerEvent) => {
+  const handleVerticalRollerDown = (e: PointerEvent) => {
     if (!mainRef.current) return;
-    SCROLL.bar.clicked = true
-    SCROLL.bar.offsetStart = getOffset(e)
-    if (props.horizontal) {
-      SCROLL.scrollStart = mainRef.current.scrollLeft
-    } else {
-      SCROLL.scrollStart = mainRef.current.scrollTop
-    }
-  }
+    SCROLL.barY.clicked = true;
+    SCROLL.barY.offsetStart = getOffset(e).y;
+    SCROLL.scrollStartY = mainRef.current.scrollTop;
+  };
+
+  const handleHorizontalRollerDown = (e: PointerEvent) => {
+    if (!mainRef.current) return;
+    SCROLL.barX.clicked = true;
+    SCROLL.barX.offsetStart = getOffset(e).x;
+    SCROLL.scrollStartX = mainRef.current.scrollLeft;
+  };
+
   const handleBarScroll = (e: WheelEvent) => {
     e.preventDefault();
+    // console.log('scroll')
     if (!mainRef.current) return;
     if (props.horizontal) {
-      mainRef.current.scrollLeft += e.deltaX
-    } else {
-      mainRef.current.scrollTop += e.deltaY
+      mainRef.current.scrollLeft += e.deltaX;
     }
-  }
+    if (props.vertical) {
+      mainRef.current.scrollTop += e.deltaY;
+    }
+  };
+
   const handleWheel = (ev: WheelEvent) => {
     let e = ev as _CustomWheelEvent;
     if (e.shiftKey) return;
     if (!mainRef.current) return;
-    if (props.horizontal && !props.horizontalScroll) return
+    if (props.horizontal) return;
 
-    let wheelDeltaY = e.wheelDeltaY as any
+    let wheelDeltaY = e.wheelDeltaY as any;
     let isTrackpad = false;
 
     if (wheelDeltaY) {
-      if (wheelDeltaY === (e.deltaY * -3)) {
+      if (wheelDeltaY === e.deltaY * -3) {
         isTrackpad = true;
       }
     } else if (e.deltaMode === 0) {
@@ -249,107 +295,147 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
     }
 
     if (!isTrackpad) {
-      e.preventDefault()
+      e.preventDefault();
       mainRef.current.scrollLeft += e.deltaY / 4;
     }
-    set()
+    set();
     checkRoller();
-  }
+  };
+
   const handleScroll = (e: Event) => {
-    // if(props.horizontal && !props.horizontalScroll) return
     e.stopPropagation();
 
-    set()
+    set();
     checkRoller();
-  }
+  };
 
   const handlePointerEnter = () => {
     if (!props.showWhenMinimal) {
       if (SCROLL.height > SCROLL.boxHeight) {
-        SCROLL.hovered = true
-        setHovered(true)
+        SCROLL.hovered = true;
+        setHovered(true);
       }
     } else {
-      SCROLL.hovered = true
-      setHovered(true)
+      SCROLL.hovered = true;
+      setHovered(true);
     }
-  }
+  };
+
   const handlePointerLeave = () => {
-    SCROLL.hovered = false
-    if (SCROLL.grab) return
-    if (SCROLL.bar.clicked) return
-    setHovered(false)
-  }
+    SCROLL.hovered = false;
+    if (SCROLL.grab) return;
+    if (SCROLL.barX.clicked || SCROLL.barY.clicked) return;
+    setHovered(false);
+  };
 
   const set = () => {
     if (!mainRef.current) return;
-    if (props.horizontal) {
-      SCROLL.height = mainRef.current.scrollWidth
-      SCROLL.top = mainRef.current.scrollLeft
-      SCROLL.boxHeight = mainRef.current.clientWidth
+    if (props.vertical && props.horizontal) {
+      SCROLL.height = mainRef.current.scrollHeight;
+      SCROLL.top = mainRef.current.scrollTop;
+      SCROLL.boxHeight = mainRef.current.clientHeight;
+      SCROLL.width = mainRef.current.scrollWidth;
+      SCROLL.left = mainRef.current.scrollLeft;
+      SCROLL.boxWidth = mainRef.current.clientWidth;
+    } else if (props.horizontal) {
+      SCROLL.width = mainRef.current.scrollWidth;
+      SCROLL.left = mainRef.current.scrollLeft;
+      SCROLL.boxWidth = mainRef.current.clientWidth;
     } else {
-      SCROLL.height = mainRef.current.scrollHeight
-      SCROLL.top = mainRef.current.scrollTop
-      SCROLL.boxHeight = mainRef.current.clientHeight
+      SCROLL.height = mainRef.current.scrollHeight;
+      SCROLL.top = mainRef.current.scrollTop;
+      SCROLL.boxHeight = mainRef.current.clientHeight;
     }
-    SCROLL.progress = SCROLL.top / (SCROLL.height - SCROLL.boxHeight)
-    SCROLL.inited = true
-  }
+    SCROLL.progressY = SCROLL.top / (SCROLL.height - SCROLL.boxHeight);
+    SCROLL.progressX = SCROLL.left / (SCROLL.width - SCROLL.boxWidth);
+    SCROLL.inited = true;
+  };
 
   const getOffset = (e: PointerEvent | TouchEvent) => {
-    if ('x' in e) {
-      return props.horizontal ? e.x : e.y;
+    if ("x" in e) {
+      return { x: e.x, y: e.y };
     } else {
       const touch = e.touches[0];
-      return props.horizontal ? touch.clientX : touch.clientY;
+      return { x: touch.clientX, y: touch.clientY };
     }
-  }
+  };
 
   const checkRoller = () => {
-    if (!rollerRef.current) return
-    SCROLL.bar.height = 100 / (SCROLL.height / SCROLL.boxHeight);
+    SCROLL.barX.size = 100 / (SCROLL.width / SCROLL.boxWidth);
+    SCROLL.barY.size = 100 / (SCROLL.height / SCROLL.boxHeight);
+    if (props.vertical && props.horizontal) {
+      if (verticalRollerRef.current) {
+        verticalRollerRef.current.style.height = `${SCROLL.barY.size}%`;
+        verticalRollerRef.current.style.top = `${SCROLL.progressY * 100 - SCROLL.progressY * SCROLL.barY.size}%`;
+      }
 
-    if (props.horizontal) {
-      rollerRef.current.style.width = `${SCROLL.bar.height}%`
-      rollerRef.current.style.left = `${SCROLL.progress * 100 - SCROLL.progress * SCROLL.bar.height}%`
+      if (horizontalRollerRef.current) {
+        horizontalRollerRef.current.style.width = `${SCROLL.barX.size}%`;
+        horizontalRollerRef.current.style.left = `${SCROLL.progressX * 100 - SCROLL.progressX * SCROLL.barX.size}%`;
+      }
+    } else if (props.horizontal) {
+      if (horizontalRollerRef.current) {
+        horizontalRollerRef.current.style.width = `${SCROLL.barX.size}%`;
+        horizontalRollerRef.current.style.left = `${SCROLL.progressX * 100 - SCROLL.progressX * SCROLL.barX.size}%`;
+      }
     } else {
-      rollerRef.current.style.height = `${SCROLL.bar.height}%`
-      rollerRef.current.style.top = `${SCROLL.progress * 100 - SCROLL.progress * SCROLL.bar.height}%`
+      if (verticalRollerRef.current) {
+        verticalRollerRef.current.style.height = `${SCROLL.barY.size}%`;
+        verticalRollerRef.current.style.top = `${SCROLL.progressY * 100 - SCROLL.progressY * SCROLL.barY.size}%`;
+      }
     }
 
-    if (SCROLL.progress === 0) {
-      props.onReachStart?.()
-    }
-    if (SCROLL.progress === 1) {
-      props.onReachEnd?.()
-    }
-    props.onScroll?.(SCROLL.progress)
-  }
+    if (SCROLL.progressX === 0) props.onReachStart?.("x");
+    if (SCROLL.progressY === 0) props.onReachStart?.("y");
+    if (SCROLL.progressX === 1) props.onReachEnd?.("x");
+    if (SCROLL.progressY === 1) props.onReachEnd?.("y");
 
+    props.onScroll?.(
+      { progress: SCROLL.progressX, offset: SCROLL.left },
+      { progress: SCROLL.progressY, offset: SCROLL.top }
+    );
+  };
 
   const cl = [
-    'scroller',
+    "scroller",
     getClR(props.className),
-    getCl(props.horizontal, 'horizontal'),
-    getCl(props.needBar, 'bar'),
-    getCl(props.grabCursor, 'grab'),
-    getCl(props.autoHide, 'autoHide'),
-    getCl(props.barAltPosition, 'barAlt'),
-    getCl(props.borderPadding, 'borderPadding'),
-    getCl(props.borderFade, 'borderFade'),
-    getCl(hovered, 'hovered'),
-  ].join(' ')
+    getCl(props.horizontal, "horizontal"),
+    getCl(props.vertical, "vertical"),
+    getCl(props.needBar, "bar"),
+    getCl(props.grabCursor, "grab"),
+    getCl(props.autoHide, "autoHide"),
+    getCl(props.barAltPosition, "barAlt"),
+    getCl(props.borderPadding, "borderPadding"),
+    getCl(props.borderFade, "borderFade"),
+    getCl(hovered, "hovered"),
+  ].join(" ");
 
   return (
-    <div className={cl} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
-      {props.needBar &&
-        <div className={`scroller__bar ${getClR(props.barClassName)}`} ref={barRef}>
-          <div className={`scroller__bar_roller ${getClR(props.barRollerClassName)}`} ref={rollerRef} />
-        </div>
-      }
-      <div className={`scroller__content ${getClR(props.contentClassName)}`} ref={mainRef}>
+    <div
+      className={cl}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
+    >
+      {props.needBar && (
+        <>
+          {props.vertical && (
+            <div className={`scroller__bar scroller__bar_vertical ${getClR(props.barClassName)}`} ref={verticalBarRef}>
+              <div className={`scroller__bar_roller scroller__bar_roller_vertical ${getClR(props.barRollerClassName)}`} ref={verticalRollerRef} />
+            </div>
+          )}
+          {props.horizontal && (
+            <div className={`scroller__bar scroller__bar_horizontal ${getClR(props.barClassName)}`} ref={horizontalBarRef}>
+              <div className={`scroller__bar_roller scroller__bar_roller_horizontal ${getClR(props.barRollerClassName)}`} ref={horizontalRollerRef} />
+            </div>
+          )}
+        </>
+      )}
+      <div
+        className={`scroller__content ${getClR(props.contentClassName)}`}
+        ref={mainRef}
+      >
         {props.children}
       </div>
     </div>
-  )
-})
+  );
+});

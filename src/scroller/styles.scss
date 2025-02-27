@@ -3,7 +3,7 @@
   overflow-x: hidden;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  
+
   &::-webkit-scrollbar {
     width: 0px;
     background: transparent;
@@ -13,6 +13,18 @@
 @mixin scrollWithoutScrollHorizontal() {
   overflow-x: scroll;
   overflow-y: hidden;
+  -ms-overflow-style: none;
+  scrollbar-height: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    height: 0px;
+    background: transparent;
+  }
+}
+
+@mixin scrollWithoutScrollBoth() {
+  overflow: scroll;
   -ms-overflow-style: none;
   scrollbar-height: none;
   scrollbar-width: none;
@@ -58,122 +70,44 @@
     .scroller__bar {
       display: flex;
     }
+    // &>.scroller__bar {
+    //   right: 0.25rem;
+    //   top: 0.25rem;
+    //   bottom: 0.25rem;
+    //   width: 0.15rem;
+    //   transform: translateX(1rem);
 
-    &:not(.__horizontal) {
-      &:not(.__barAlt) {
-        &>.scroller__bar {
-          right: 0.25rem;
-          top: 0.25rem;
-          bottom: 0.25rem;
-          width: 0.15rem;
-          transform: translateX(1rem);
+    //   &:before {
+    //     width: 1rem;
+    //     right: -0.25rem;
+    //     top: -0.25rem;
+    //     bottom: -0.25rem;
+    //   }
 
-          &:before {
-            width: 1rem;
-            right: -0.25rem;
-            top: -0.25rem;
-            bottom: -0.25rem;
-          }
+    //   &:hover {
+    //     width: 0.5rem;
+    //   }
 
-          &:hover {
-            width: 0.5rem;
-          }
+    //   &>.scroller__bar_roller {
+    //     right: 0;
+    //     width: 100%;
+    //     min-height: 1rem;
+    //     border-radius: 1rem;
+    //     background-color: rgb(47, 47, 47);
+    //     position: absolute;
+    //     transition: opacity 0.2s;
 
-          &>.scroller__bar_roller {
-            right: 0;
-            width: 100%;
-            min-height: 1rem;
-          }
-        }
-      }
+    //     &:hover {
+    //       opacity: 0.6;
+    //       cursor: grab;
+    //     }
 
-      &.__barAlt {
-        &>.scroller__bar {
-          left: 0.25rem;
-          top: 0.25rem;
-          bottom: 0.25rem;
-          width: 0.15rem;
-          transform: translateX(-1rem);
+    //     &:active {
+    //       cursor: grabbing;
+    //     }
+    //   }
+    // }
 
-          &:before {
-            width: 1rem;
-            left: -0.25rem;
-            top: -0.25rem;
-            bottom: -0.25rem;
-          }
-
-          &:hover {
-            width: 0.5rem;
-          }
-
-          &>.scroller__bar_roller {
-            left: 0;
-            width: 100%;
-            min-height: 1rem;
-          }
-        }
-      }
-    }
-
-    &.__horizontal {
-      &:not(.__barAlt) {
-        &>.scroller__bar {
-          left: 0.25rem;
-          right: 0.25rem;
-          bottom: 0.25rem;
-          height: 0.15rem;
-          width: auto;
-          transform: translateY(1rem);
-
-          &:before {
-            height: 1rem;
-            right: -0.25rem;
-            left: -0.25rem;
-            bottom: -0.25rem;
-          }
-
-          &:hover {
-            height: 0.5rem;
-            width: auto;
-          }
-
-          &>.scroller__bar_roller {
-            bottom: 0;
-            height: 100%;
-            min-width: 1rem;
-          }
-        }
-      }
-
-      &.__barAlt {
-        &>.scroller__bar {
-          left: 0.25rem;
-          right: 0.25rem;
-          top: 0.25rem;
-          height: 0.15rem;
-          width: auto;
-          transform: translateY(-1rem);
-
-          &:before {
-            height: 1rem;
-            right: -0.25rem;
-            left: -0.25rem;
-            top: -0.25rem;
-          }
-
-          &:hover {
-            height: 0.5rem;
-            width: auto;
-          }
-
-          &>.scroller__bar_roller {
-            top: 0;
-            height: 100%;
-            min-width: 1rem;
-          }
-        }
-      }
-    }
   }
 
   &>.scroller__bar {
@@ -235,7 +169,7 @@
     }
   }
 
-  &:not(.__horizontal) {
+  &.__vertical {
     $offset: 1rem;
 
     &.__borderFade {
@@ -260,6 +194,92 @@
       max-height: 100%;
       width: 100%;
       flex-direction: column;
+    }
+  }
+
+  &.__horizontal.__vertical {
+    &>.scroller__content {
+      @include scrollWithoutScrollBoth();
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    &>.scroller__bar_vertical {
+      right: 0.5rem;
+      top: 0.5rem;
+      bottom: 0.5rem;
+      width: 0.15rem;
+      transform: translateX(1rem);
+
+      &:before {
+        width: 1rem;
+        right: -0.5rem;
+        top: -0.5rem;
+        bottom: -0.5rem;
+      }
+
+      &:hover {
+        width: 0.5rem;
+      }
+
+      &>.scroller__bar_roller {
+        right: 0;
+        width: 100%;
+        min-height: 1rem;
+        border-radius: 1rem;
+        background-color: rgb(47, 47, 47);
+        position: absolute;
+        transition: opacity 0.2s;
+
+        &:hover {
+          opacity: 0.6;
+          cursor: grab;
+        }
+
+        &:active {
+          cursor: grabbing;
+        }
+      }
+    }
+
+    &>.scroller__bar_horizontal {
+      left: 0.5rem;
+      right: 0.5rem;
+      bottom: 0.5rem;
+      height: 0.15rem;
+      width: auto;
+      transform: translateY(1rem);
+
+      &:before {
+        height: 1rem;
+        right: -0.5rem;
+        left: -0.5rem;
+        bottom: -0.5rem;
+      }
+
+      &:hover {
+        height: 0.5rem;
+        width: auto;
+      }
+
+      &>.scroller__bar_roller {
+        bottom: 0;
+        height: 100%;
+        min-width: 1rem;
+        border-radius: 1rem;
+        background-color: rgb(47, 47, 47);
+        position: absolute;
+        transition: opacity 0.2s;
+
+        &:hover {
+          opacity: 0.6;
+          cursor: grab;
+        }
+
+        &:active {
+          cursor: grabbing;
+        }
+      }
     }
   }
 

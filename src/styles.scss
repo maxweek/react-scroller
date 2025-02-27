@@ -5,7 +5,7 @@
 }
 
 .app {
-  background-color: black;
+  background-color: rgb(46, 46, 46);
   display: flex;
   min-height: 100dvh;
   min-height: 100vh;
@@ -14,7 +14,7 @@
   padding: 2rem;
   .app__inner {
     display: flex;
-    color: white;
+    color: gray;
     flex-wrap: wrap;
     gap: 2rem;
 
@@ -34,7 +34,7 @@
     .app__item_title {}
 
     .app__item_box {
-      max-height: 80vh;
+      max-height: 500px;
       display: flex;
       border: 1px solid gray;
       border-radius: 1rem;

@@ -1,42 +1,60 @@
 import React, { ReactNode } from "react";
 import { Scroller } from "./scroller";
 
+interface IScrollerProgress {
+  progress: number,
+  offset: number
+}
 
 export interface IScroller {
   children?: ReactNode,
   needBar?: boolean,
-  barAltPosition?: boolean
-  horizontal?: boolean
-  horizontalScroll?: boolean
-  grab?: boolean
+  barAltPosition?: boolean,
+  vertical?: boolean,
+  horizontal?: boolean,
+  grab?: boolean,
   borderFade?: boolean,
   borderPadding?: boolean,
   autoHide?: boolean,
-  grabCursor?: boolean
+  grabCursor?: boolean,
   className?: string,
   barClassName?: string,
   barRollerClassName?: string,
   contentClassName?: string,
-  showWhenMinimal?: boolean
-  onReachStart?: () => void;
-  onReachEnd?: () => void;
-  onScroll?: (progress: number) => void;
+  showWhenMinimal?: boolean,
+  onReachStart?: (type: 'x' | 'y') => void;
+  onReachEnd?: (type: 'x' | 'y') => void;
+  onScroll?: (x: IScrollerProgress, y: IScrollerProgress) => void;
 }
 
 export interface IScrollerProperties {
   height: number,
+  width: number,
   top: number,
+  left: number,
   boxHeight: number,
-  progress: number,
+  boxWidth: number,
+  progressX: number,
+  progressY: number,
   grab: boolean,
   grabOffset: number,
-  grabStart: number,
-  grabDelta: number,
-  scrollStart: number,
+  grabStartX: number,
+  grabStartY: number,
   hovered: boolean,
   inited: boolean,
-  bar: {
-    height: number,
+  scrollStartX: number,
+  scrollStartY: number,
+  grabDeltaX: number,
+  grabDeltaY: number,
+  barX: {
+    size: number,
+    offset: number,
+    offsetStart: number,
+    offsetDelta: number,
+    clicked: boolean
+  }
+  barY: {
+    size: number,
     offset: number,
     offsetStart: number,
     offsetDelta: number,
@@ -53,5 +71,4 @@ export interface IScrollerRef {
   scrollRef: React.RefObject<HTMLDivElement>;
 }
 
-
-export default Scroller
+export default Scroller;
