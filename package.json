@@ -1,7 +1,7 @@
 {
   "name": "@maxweek/react-scroller",
   "description": "Make your blocks scrolling easy, with a custom scroll-bar, based on native browser scroll",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "type": "module",
   "author": "Max Nedelko",
   "license": "MIT",
@@ -39,8 +39,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "keywords": [
     "touch",
     "scrollbar",
