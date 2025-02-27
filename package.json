@@ -1,7 +1,11 @@
 {
   "name": "@maxweek/react-scroller",
   "description": "Make your blocks scrolling easy, with a custom scroll-bar, based on native browser scroll",
+<<<<<<< HEAD
   "version": "1.2.1",
+=======
+  "version": "1.1.30",
+>>>>>>> 9dcec3f478bc9250a2425df8933d49589d8b590a
   "type": "module",
   "author": "Max Nedelko",
   "license": "MIT",
@@ -61,7 +65,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
     "path": "^0.12.7",
-    "react": "^18.2.0",
+    "react": "^18.3.1",
     "react-dom": "^18.2.0",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
