@@ -9,7 +9,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, './src/scroller/index.ts'),
       name: 'react-scroller',
-      fileName: (format) => `react-scroller.${format}.js`,
+      fileName: 'react-scroller'
     },
     rollupOptions: {
       external: ['react', 'react-dom'],
