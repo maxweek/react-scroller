@@ -267,7 +267,6 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
 
   const handleBarScroll = (e: WheelEvent) => {
     e.preventDefault();
-    // console.log('scroll')
     if (!mainRef.current) return;
     if (props.horizontal) {
       mainRef.current.scrollLeft += e.deltaX;
