@@ -204,6 +204,10 @@
       max-height: 100%;
     }
 
+  }
+  
+  &.__horizontal,
+  &.__vertical {
     &>.scroller__bar_vertical {
       right: 0.5rem;
       top: 0.5rem;
@@ -241,7 +245,6 @@
         }
       }
     }
-
     &>.scroller__bar_horizontal {
       left: 0.5rem;
       right: 0.5rem;

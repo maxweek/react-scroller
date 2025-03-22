@@ -310,7 +310,7 @@ export const Scroller = forwardRef<IScrollerRef, IScroller>((props: IScroller, r
 
   const handlePointerEnter = () => {
     if (!props.showWhenMinimal) {
-      if (SCROLL.height > SCROLL.boxHeight) {
+      if (SCROLL.height > SCROLL.boxHeight || SCROLL.width > SCROLL.boxWidth) {
         SCROLL.hovered = true;
         setHovered(true);
       }
